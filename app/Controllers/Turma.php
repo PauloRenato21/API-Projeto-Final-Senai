@@ -16,6 +16,8 @@ class Turma extends ResourceController{
         return $this->respond($data);
     }
 
+    //Metodo que tras informações relacionadas com uma Turma: 
+    //categoria, franquia.
     public function turmaCategoriaFranquia(){
         $modelTurma = new TurmaModel();
         $modelCategoria = new CategoriaModel();
