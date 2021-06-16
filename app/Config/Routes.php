@@ -41,6 +41,7 @@ $routes->resource('funcionario');
 $routes->resource('admin',['placeholder' => '(:num)']);
 $routes->resource('atleta',['placeholder' => '(:num)']);
 $routes->get('atleta/informacoes','atleta::atletaTurmaResponsavel');
+$routes->get('atleta/pdf','atleta::atletaPdf');
 $routes->resource('franquia',['placeholder' => '(:num)']);
 $routes->get('franquia/informacoes','franquia::franquiaClube');
 $routes->resource('clube',['placeholder' => '(:num)']);
