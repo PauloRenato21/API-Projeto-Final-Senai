@@ -15,6 +15,8 @@ class Franquia extends ResourceController{
         return $this->respond($data);
     }
 
+    //Metodo que tras informações relacionadas com um Franquia: 
+    //clube.
     public function franquiaClube(){
         $modalFranquia = new FranquiaModel();
         $modalClube = new ClubeModel();
