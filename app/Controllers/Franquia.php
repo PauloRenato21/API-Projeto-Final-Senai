@@ -1,5 +1,6 @@
 <?php namespace App\Controllers;
 
+use App\Models\ClubeModel;
 use App\Models\FranquiaModel;
 use CodeIgniter\RESTful\ResourceController;
 
@@ -12,6 +13,33 @@ class Franquia extends ResourceController{
         $data = $modal->findAll();
         
         return $this->respond($data);
+    }
+
+    public function franquiaClube(){
+        $modalFranquia = new FranquiaModel();
+        $modalClube = new ClubeModel();
+
+        $dataFranquia = $modalFranquia->findAll();
+        $dataClube = $modalClube->findAll();
+
+        $resultado = [];
+
+        foreach($dataFranquia as $franquia){
+            $franquia['clube'] = array();
+
+            foreach($dataClube as $clube){
+                if($franquia['fk_clube_futebol_id'] == $clube['id']){
+                    $franquiaClube['nome'] = $clube['nome'];
+                    $franquiaClube['cnpj'] = $clube['cnpj'];
+
+                    array_push($franquia['clube'],$franquiaClube);
+                }
+            }
+
+            array_push($resultado,$franquia);
+        }
+
+        return $this->respond($resultado);
     }
 
     //Metodo Insert Franquia.
