@@ -32,12 +32,22 @@ $routes->setAutoRoute(true);
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
+<<<<<<< HEAD
 //$routes->get('/', 'Home::index');
 
 $routes->resource('responsavel');
 $routes->resource('cargo');
 $routes->resource('categoria');
 $routes->resource('funcionario');
+=======
+// $routes->get('/', 'Home::index');
+$routes->resource('admin',['placeholder' => '(:num)']);
+$routes->resource('atleta',['placeholder' => '(:num)']);
+$routes->resource('franquia',['placeholder' => '(:num)']);
+$routes->resource('clube',['placeholder' => '(:num)']);
+$routes->resource('turma',['placeholder' => '(:num)']);
+$routes->get('clube/franquia','clube::clubeFranquia');
+>>>>>>> aefa65fc7b072f3cbffe4af8ed024c6ad1626e86
 
 /*
  * --------------------------------------------------------------------
