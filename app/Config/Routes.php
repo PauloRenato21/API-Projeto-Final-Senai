@@ -45,6 +45,7 @@ $routes->resource('franquia',['placeholder' => '(:num)']);
 $routes->get('franquia/informacoes','franquia::franquiaClube');
 $routes->resource('clube',['placeholder' => '(:num)']);
 $routes->resource('turma',['placeholder' => '(:num)']);
+$routes->get('turma/informacoes','turma::turmaCategoriaFranquia');
 $routes->get('clube/franquia','clube::clubeFranquia');
 
 /*
