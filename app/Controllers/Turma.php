@@ -1,5 +1,7 @@
 <?php namespace App\Controllers;
 
+use App\Models\CategoriaModel;
+use App\Models\FranquiaModel;
 use App\Models\TurmaModel;
 use CodeIgniter\RESTful\ResourceController;
 
@@ -12,6 +14,49 @@ class Turma extends ResourceController{
         $data = $model->findAll();
 
         return $this->respond($data);
+    }
+
+    public function turmaCategoriaFranquia(){
+        $modelTurma = new TurmaModel();
+        $modelCategoria = new CategoriaModel();
+        $modelFranquia = new FranquiaModel();
+
+        $dataTurma = $modelTurma->findAll();
+        $dataCategoria = $modelCategoria->findAll();
+        $dataFranquia = $modelFranquia->findAll();
+
+        $resultado = [];
+
+        foreach($dataTurma as $turma){
+            $turma['categoria'] = array();
+            $turma['franquia'] = array();
+
+            foreach($dataCategoria as $categoria){
+                if($turma['fk_categoria_id'] == $categoria['id']){
+                    $turmaCategoria['nome'] = $categoria['nome'];
+
+                    array_push($turma['categoria'],$turmaCategoria);
+                }
+            }
+
+            foreach($dataFranquia as $franquia){
+                if($turma['fk_franquias_id'] == $franquia['id']){
+                    $turmaFranquia['nome'] = $franquia['nome'];
+                    $turmaFranquia['cnpj'] = $franquia['cnpj'];
+                    $turmaFranquia['rua'] = $franquia['endereco_rua'];
+                    $turmaFranquia['numero'] = $franquia['endereco_numero'];
+                    $turmaFranquia['cep'] = $franquia['endereco_CEP'];
+                    $turmaFranquia['estado'] = $franquia['estado'];
+                    $turmaFranquia['cidade'] = $franquia['cidade'];
+                    $turmaFranquia['telefone'] = $franquia['telefone'];
+                    $turmaFranquia['email'] = $franquia['email'];
+
+                    array_push($turma['franquia'],$turmaFranquia);
+                }
+            }
+            array_push($resultado,$turma);
+        }
+        return $this->respond($resultado);
     }
 
     //Metedo Insert Clube.
