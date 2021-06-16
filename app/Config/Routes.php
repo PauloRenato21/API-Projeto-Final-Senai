@@ -32,7 +32,13 @@ $routes->setAutoRoute(true);
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
-$routes->get('/', 'Home::index');
+// $routes->get('/', 'Home::index');
+$routes->resource('admin',['placeholder' => '(:num)']);
+$routes->resource('atleta',['placeholder' => '(:num)']);
+$routes->resource('franquia',['placeholder' => '(:num)']);
+$routes->resource('clube',['placeholder' => '(:num)']);
+$routes->resource('turma',['placeholder' => '(:num)']);
+$routes->get('clube/franquia','clube::clubeFranquia');
 
 /*
  * --------------------------------------------------------------------
