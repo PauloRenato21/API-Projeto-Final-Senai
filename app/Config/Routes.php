@@ -36,7 +36,17 @@ $routes->setAutoRoute(true);
 $routes->get('/', 'Home::index');
 $routes->resource('categoria',['placeholder' => '(:num)']);
 $routes->resource('admin',['placeholder' => '(:num)']);
+//$routes->get('/', 'Home::index');
+
+$routes->resource('responsavel');
+$routes->resource('cargo');
+$routes->resource('categoria');
+$routes->resource('funcionario');
+$routes->resource('admin',['placeholder' => '(:num)']);
+$routes->resource('atleta',['placeholder' => '(:num)']);
+$routes->get('atleta/informacoes','atleta::atletaTurmaResponsavel');
 $routes->resource('franquia',['placeholder' => '(:num)']);
+$routes->get('franquia/informacoes','franquia::franquiaClube');
 $routes->resource('clube',['placeholder' => '(:num)']);
 $routes->get('clube/franquia','clube::clubeFranquia');
 
@@ -55,6 +65,9 @@ $routes->get('funcionario/fct','funcionario::funcionariocargoturma');
 $routes->resource('turmafuncionario', ['placeholder' => '(:num)']);
 $routes->get('turmafuncionario/funcionario', 'turmafuncionario::funcionario');
 
+$routes->resource('turma',['placeholder' => '(:num)']);
+$routes->get('turma/informacoes','turma::turmaCategoriaFranquia');
+$routes->get('clube/franquia','clube::clubeFranquia');
 
 /*
  * --------------------------------------------------------------------
