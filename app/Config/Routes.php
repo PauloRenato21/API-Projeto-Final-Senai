@@ -44,6 +44,7 @@ $routes->get('atleta/informacoes','atleta::atletaTurmaResponsavel');
 $routes->get('atleta/pdf','atleta::atletaPdf');
 $routes->resource('franquia',['placeholder' => '(:num)']);
 $routes->get('franquia/informacoes','franquia::franquiaClube');
+$routes->get('franquia/pdf','franquia::franquiaPdf');
 $routes->resource('clube',['placeholder' => '(:num)']);
 $routes->resource('turma',['placeholder' => '(:num)']);
 $routes->get('turma/informacoes','turma::turmaCategoriaFranquia');
