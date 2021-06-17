@@ -1,7 +1,12 @@
 <?php namespace App\Controllers;
 
+use App\Models\AtletaModel;
+use App\Models\CargoModel;
+use App\Models\CategoriaModel;
 use App\Models\ClubeModel;
 use App\Models\FranquiaModel;
+use App\Models\FuncionarioModel;
+use App\Models\TurmaModel;
 use CodeIgniter\RESTful\ResourceController;
 
 class Franquia extends ResourceController{
@@ -44,6 +49,118 @@ class Franquia extends ResourceController{
         return $this->respond($resultado);
     }
 
+    //Metodo do relatorio das informações da franquia;
+    public function franquiaPdf(){
+        $modalFranquia = new FranquiaModel();
+        $modalClube = new ClubeModel();
+        $modalFuncionario = new FuncionarioModel();
+        $modalCargo = new CargoModel();
+        $modalTurma = new TurmaModel();
+        $modalCategoria = new CategoriaModel();
+        $modalAtleta = new AtletaModel();
+
+        $dataFranquia = $modalFranquia->findAll();
+        $dataClube = $modalClube->findAll();
+        $dataFuncionario = $modalFuncionario->findAll();
+        $dataCargo = $modalCargo->findAll();
+        $dataTurma = $modalTurma->findAll();
+        $dataCategoria = $modalCategoria->findAll();
+        $dataAtleta = $modalAtleta->findAll();
+
+        $resultado = [];
+
+        foreach($dataFranquia as $franquia){
+            $franquia["clube"] = array();
+            $franquia["funcionarios"] = array();
+            $franquia["cargo"] = array();
+            $franquia["turma"] = array();
+            $franquia["categoria"] = array();
+            $franquia["atleta"] = array();
+
+            foreach($dataClube as $clube){
+                if($franquia['fk_clube_futebol_id'] == $clube['id']){
+                    $franquiaClube['nome'] = $clube['nome'];
+                    $franquiaClube['cnpj'] = $clube['cnpj'];
+                    $idFranquia = $franquia['id'];
+
+                    array_push($franquia['clube'],$franquiaClube);
+                }
+            }
+
+            foreach($dataFuncionario as $funcionario){
+                if($idFranquia == $funcionario['fk_franquias_id']){
+                    $franquiaFuncionario['nome'] = $funcionario['nome'];
+                    $franquiaFuncionario['dt_nascimento'] = $funcionario['dt_nascimento'];
+                    $franquiaFuncionario['cpf'] = $funcionario['cpf'];
+                    $franquiaFuncionario['rg'] = $funcionario['rg'];
+                    $franquiaFuncionario['naturalidade'] = $funcionario['naturalidade'];
+                    $franquiaFuncionario['rua'] = $funcionario['endereco_rua'];
+                    $franquiaFuncionario['numero'] = $funcionario['endereco_numero'];
+                    $franquiaFuncionario['bairro'] = $funcionario['endereco_bairro'];
+                    $franquiaFuncionario['telefone'] = $funcionario['telefone'];
+                    $franquiaFuncionario['email'] = $funcionario['email'];
+                    $fkCargo = $funcionario['fk_cargo_id'];
+
+                    array_push($franquia['funcionarios'],$franquiaFuncionario);
+                }
+            }
+
+            foreach($dataCargo as $cargo){
+                if($fkCargo == $cargo['id']){
+                    $franquiaCargo['nome'] = $cargo['nome'];
+
+                    array_push($franquia['cargo'],$franquiaCargo);
+                }
+            }
+
+            foreach($dataTurma as $turma){
+                if($idFranquia == $turma['fk_franquias_id']){
+                    $franquiaTurma['nome'] = $turma['nome'];
+                    $franquiaTurma['turno'] = $turma['turno'];
+                    $franquiaTurma['horario_inicial'] = $turma['horario_inicial'];
+                    $franquiaTurma['horario_termino'] = $turma['horario_termino'];
+                    $fkCategoria = $turma['fk_categoria_id'];
+                    $idTurma = $turma['id'];
+
+                    array_push($franquia['turma'],$franquiaTurma);
+                }
+            }
+
+            foreach($dataCategoria as $categoria){
+                if($fkCategoria == $categoria['id']){
+                    $franquiaCategoria['nome'] = $categoria['nome'];
+
+                    array_push($franquia['categoria'],$franquiaCategoria);
+                }
+            }
+
+            foreach($dataAtleta as $atleta){
+                if($idTurma == $atleta['fk_turma_id']){
+                    $franquiaAtleta['nome'] = $atleta['nome'];
+                    $franquiaAtleta['cpf'] = $atleta['cpf'];
+                    $franquiaAtleta['dt_nascimento'] = $atleta['dt_nascimento'];
+                    $franquiaAtleta['rua'] = $atleta['endereco_rua'];
+                    $franquiaAtleta['numero'] = $atleta['endereco_numero'];
+                    $franquiaAtleta['bairro'] = $atleta['endereco_bairro'];
+                    $franquiaAtleta['cep'] = $atleta['endereco_CEP'];
+                    $franquiaAtleta['naturalidade'] = $atleta['naturalidade'];
+                    $franquiaAtleta['problema_saude'] = $atleta['problema_saude'];
+                    $franquiaAtleta['alergia'] = $atleta['alergia'];
+                    $franquiaAtleta['medicamento'] = $atleta['medicamento'];
+                    $franquiaAtleta['telefone'] = $atleta['telefone'];
+                    $franquiaAtleta['email'] = $atleta['email'];
+
+                    array_push($franquia['atleta'],$franquiaAtleta);
+                }
+            }
+
+            array_push($resultado,$franquia);
+        }
+
+        return $this->respond($resultado);
+    }
+
+    
     //Metodo Insert Franquia.
     public function create()
     {
