@@ -2,24 +2,24 @@
  
 use CodeIgniter\RESTful\ResourceController;
 use CodeIgniter\API\ResponseTrait;
-use App\Models\CargoModel;
+use App\Models\TurmafuncionarioModel;
 use App\Models\FuncionarioModel;
  
-class Cargo extends ResourceController
+class TurmaFuncionario extends ResourceController
 {
     use ResponseTrait;
-    // lista todos responsaveis
+    // lista todos TurmaFuncionario
     public function index()
     {
-        $model = new CargoModel();
+        $model = new TurmaFuncionarioModel();
         $data = $model->findAll();
         return $this->respond($data);
     }
  
-    // lista um Cargos
+    // lista um TurmaFuncionario
     public function show($id = null)
     {
-        $model = new CargoModel();
+        $model = new TurmaFuncionarioModel();
         $data = $model->getWhere(['id' => $id])->getResult();
 
         if($data){
@@ -29,10 +29,10 @@ class Cargo extends ResourceController
         return $this->failNotFound('Nenhum dado encontrado com id '.$id);        
     }
  
-    // adiciona um Cargos
+    // adiciona um TurmaFuncionario
     public function create()
     {
-        $model = new CargoModel();
+        $model = new TurmaFuncionarioModel();
         $data = $this->request->getJSON();
 
         if($model->insert($data)){
@@ -49,10 +49,10 @@ class Cargo extends ResourceController
         return $this->fail($model->errors());
     }
     
-    // atualiza um Cargos
+    // atualiza um TurmaFuncionario
     public function update($id = null)
     {
-        $model = new CargoModel();
+        $model = new TurmaFuncionarioModel();
         $data = $this->request->getJSON();
         
         if($model->update($id, $data)){
@@ -69,10 +69,10 @@ class Cargo extends ResourceController
             return $this->fail($model->errors());
         }
  
-    // deleta um Cargos
+    // deleta um TurmaFuncionario
     public function delete($id = null)
     {
-        $model = new CargoModel();
+        $model = new TurmaFuncionarioModel();
         $data = $model->find($id);
         
         if($data){
@@ -90,29 +90,33 @@ class Cargo extends ResourceController
         return $this->failNotFound('Nenhum dado encontrado com id '.$id);        
     }
 
-    public function cargofuncionario(){
-        $funcionarioModel = new FuncionarioModel();
-        $cargoModel = new CargoModel();
+    public function Funcionario(){
+        $FuncionarioModel = new FuncionarioModel();
+        $model = new TurmaFuncionarioModel();
         
-        $datafuncionario = $funcionarioModel->findAll();
-        $datacargo = $cargoModel->findAll();
+        $dataFuncionario = $FuncionarioModel->findAll();
+        
+        $allDataTurmaFuncionario = $model->getAllTurmaFuncionario()->findAll();
         
         $resultado = [];
         
-        foreach ($datafuncionario as $funcionario){
-            $funcionario['cargo'] = array();
+        foreach ($dataFuncionario as $funcionario){
+        $funcionario['turma'] = array();
         
-            foreach ($datacargo as $cl){
-                if ($funcionario['fk_cargo_id'] == $cl['id']){
+        foreach ($allDataTurmaFuncionario as $tf){
+            if ($funcionario['id'] == $tf['fk_funcionario_id']){
         
-                    $funcionariocargo['id'] = $cl['id'];
-                    $funcionariocargo['nome'] = $cl['nome'];
+                $funcionarioturma['id'] = $tf['fk_turma_id'];
+                $funcionarioturma['nome'] = $tf['nome'];
+                $funcionarioturma['turno'] = $tf['turno'];
+                $funcionarioturma['horario_inicial'] = $tf['horario_inicial'];
+                $funcionarioturma['horario_termino'] = $tf['horario_termino'];
         
-                    array_push($funcionario['cargo'], $funcionariocargo);
-                }
+                array_push($funcionario['turma'], $funcionarioturma);
             }
+        }
         
-            array_push($resultado, $funcionario);
+        array_push($resultado, $funcionario);
         }
         
         return $this->respond($resultado);
