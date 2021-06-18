@@ -26,11 +26,15 @@ class Clube extends ResourceController{
                 return $this->respond($data);
     
             } else{
-                $erro = 'Token Invalido';
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
                 return $this->respond($erro);
             }
         } else{
-            $erro = 'Authorization não encontrada';
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
+            ];
             return $this->respond($erro);
         }
         
@@ -79,12 +83,16 @@ class Clube extends ResourceController{
                 return $this->respond($resultado);
     
             } else{
-                $erro = 'Token Invalido';
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
                 return $this->respond($erro);
             }
 
         } else{
-            $erro = 'Authorization não encontrada';
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
+            ];
             return $this->respond($erro);
         }
     }
@@ -112,12 +120,16 @@ class Clube extends ResourceController{
                 return $this->fail($model->errors());
     
             } else{
-                $erro = 'Token Invalido';
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
                 return $this->respond($erro);
             }
             
         } else{
-            $erro = 'Authorization não encontrada';
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
+            ];
             return $this->respond($erro);
         }
     }
@@ -146,12 +158,16 @@ class Clube extends ResourceController{
                 return $this->fail($model->errors());
     
             } else{
-                $erro = 'Token Invalido';
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
                 return $this->respond($erro);
             }
 
         } else{
-            $erro = 'Authorization não encontrada';
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
+            ];
             return $this->respond($erro);
         }
     }
@@ -182,12 +198,16 @@ class Clube extends ResourceController{
 
     
             } else{
-                $erro = 'Token Invalido';
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
                 return $this->respond($erro);
             }
             
         } else{
-            $erro = 'Authorization não encontrada';
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
+            ];
             return $this->respond($erro);
         }        
     }
