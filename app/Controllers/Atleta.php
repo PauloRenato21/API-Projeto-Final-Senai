@@ -145,6 +145,19 @@ class Atleta extends ResourceController{
 
     }
 
+    //Metodo show que tras um dado especifico pelo id dele Atleta.
+    public function show($id = null)
+    {
+        $model = new AtletaModel();
+        $data = $model->getWhere(['id' => $id])->getResult();
+
+        if($data){
+            return $this->respond($data);
+        }
+
+        return $this->failNotFound('Nenhum dado encontrado com id '.$id);
+    }
+
     //Metodo Insert Atleta.
     public function create()
     {
