@@ -1,5 +1,6 @@
 <?php namespace App\Controllers;
 
+use App\Helpers\Validacao;
 use App\Models\AtletaModel;
 use App\Models\CargoModel;
 use App\Models\CategoriaModel;
@@ -11,214 +12,317 @@ use CodeIgniter\RESTful\ResourceController;
 
 class Franquia extends ResourceController{
 
+    public $validacao;
+
+    public function __construct()
+    {
+        $this->validacao = new Validacao();
+    }
+
     //Metodo Select Franquia. 
     public function index()
     {
-        $modal = new FranquiaModel();
-        $data = $modal->findAll();
-        
-        return $this->respond($data);
+        if($this->request->getHeader("Authorization")){
+            if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
+
+                $modal = new FranquiaModel();
+                $data = $modal->findAll();
+                
+                return $this->respond($data);
+    
+            } else{
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
+                return $this->respond($erro);
+            }
+        } else{
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
+            ];
+            return $this->respond($erro);
+        }
     }
 
     //Metodo que tras informações relacionadas com um Franquia: 
     //clube.
     public function franquiaClube(){
-        $modalFranquia = new FranquiaModel();
-        $modalClube = new ClubeModel();
+        if($this->request->getHeader("Authorization")){
+            if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
 
-        $dataFranquia = $modalFranquia->findAll();
-        $dataClube = $modalClube->findAll();
+                $modalFranquia = new FranquiaModel();
+                $modalClube = new ClubeModel();
 
-        $resultado = [];
+                $dataFranquia = $modalFranquia->findAll();
+                $dataClube = $modalClube->findAll();
 
-        foreach($dataFranquia as $franquia){
-            $franquia['clube'] = array();
+                $resultado = [];
 
-            foreach($dataClube as $clube){
-                if($franquia['fk_clube_futebol_id'] == $clube['id']){
-                    $franquiaClube['nome'] = $clube['nome'];
-                    $franquiaClube['cnpj'] = $clube['cnpj'];
+                foreach($dataFranquia as $franquia){
+                    $franquia['clube'] = array();
 
-                    array_push($franquia['clube'],$franquiaClube);
+                    foreach($dataClube as $clube){
+                        if($franquia['fk_clube_futebol_id'] == $clube['id']){
+                            $franquiaClube['nome'] = $clube['nome'];
+                            $franquiaClube['cnpj'] = $clube['cnpj'];
+
+                            array_push($franquia['clube'],$franquiaClube);
+                        }
+                    }
+
+                    array_push($resultado,$franquia);
                 }
+
+                return $this->respond($resultado);
+    
+            } else{
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
+                return $this->respond($erro);
             }
-
-            array_push($resultado,$franquia);
+        } else{
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
+            ];
+            return $this->respond($erro);
         }
-
-        return $this->respond($resultado);
     }
 
     //Metodo do relatorio das informações da franquia;
     public function franquiaPdf(){
-        $modalFranquia = new FranquiaModel();
-        $modalClube = new ClubeModel();
-        $modalFuncionario = new FuncionarioModel();
-        $modalCargo = new CargoModel();
-        $modalTurma = new TurmaModel();
-        $modalCategoria = new CategoriaModel();
-        $modalAtleta = new AtletaModel();
+        if($this->request->getHeader("Authorization")){
+            if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
 
-        $dataFranquia = $modalFranquia->findAll();
-        $dataClube = $modalClube->findAll();
-        $dataFuncionario = $modalFuncionario->findAll();
-        $dataCargo = $modalCargo->findAll();
-        $dataTurma = $modalTurma->findAll();
-        $dataCategoria = $modalCategoria->findAll();
-        $dataAtleta = $modalAtleta->findAll();
+                $modalFranquia = new FranquiaModel();
+                $modalClube = new ClubeModel();
+                $modalFuncionario = new FuncionarioModel();
+                $modalCargo = new CargoModel();
+                $modalTurma = new TurmaModel();
+                $modalCategoria = new CategoriaModel();
+                $modalAtleta = new AtletaModel();
 
-        $resultado = [];
+                $dataFranquia = $modalFranquia->findAll();
+                $dataClube = $modalClube->findAll();
+                $dataFuncionario = $modalFuncionario->findAll();
+                $dataCargo = $modalCargo->findAll();
+                $dataTurma = $modalTurma->findAll();
+                $dataCategoria = $modalCategoria->findAll();
+                $dataAtleta = $modalAtleta->findAll();
 
-        foreach($dataFranquia as $franquia){
-            $franquia["clube"] = array();
-            $franquia["funcionarios"] = array();
-            $franquia["cargo"] = array();
-            $franquia["turma"] = array();
-            $franquia["categoria"] = array();
-            $franquia["atleta"] = array();
+                $resultado = [];
 
-            foreach($dataClube as $clube){
-                if($franquia['fk_clube_futebol_id'] == $clube['id']){
-                    $franquiaClube['nome'] = $clube['nome'];
-                    $franquiaClube['cnpj'] = $clube['cnpj'];
-                    $idFranquia = $franquia['id'];
+                foreach($dataFranquia as $franquia){
+                    $franquia["clube"] = array();
+                    $franquia["funcionarios"] = array();
+                    $franquia["cargo"] = array();
+                    $franquia["turma"] = array();
+                    $franquia["categoria"] = array();
+                    $franquia["atleta"] = array();
 
-                    array_push($franquia['clube'],$franquiaClube);
+                    foreach($dataClube as $clube){
+                        if($franquia['fk_clube_futebol_id'] == $clube['id']){
+                            $franquiaClube['nome'] = $clube['nome'];
+                            $franquiaClube['cnpj'] = $clube['cnpj'];
+                            $idFranquia = $franquia['id'];
+
+                            array_push($franquia['clube'],$franquiaClube);
+                        }
+                    }
+
+                    foreach($dataFuncionario as $funcionario){
+                        if($idFranquia == $funcionario['fk_franquias_id']){
+                            $franquiaFuncionario['nome'] = $funcionario['nome'];
+                            $franquiaFuncionario['dt_nascimento'] = $funcionario['dt_nascimento'];
+                            $franquiaFuncionario['cpf'] = $funcionario['cpf'];
+                            $franquiaFuncionario['rg'] = $funcionario['rg'];
+                            $franquiaFuncionario['naturalidade'] = $funcionario['naturalidade'];
+                            $franquiaFuncionario['rua'] = $funcionario['endereco_rua'];
+                            $franquiaFuncionario['numero'] = $funcionario['endereco_numero'];
+                            $franquiaFuncionario['bairro'] = $funcionario['endereco_bairro'];
+                            $franquiaFuncionario['telefone'] = $funcionario['telefone'];
+                            $franquiaFuncionario['email'] = $funcionario['email'];
+                            $fkCargo = $funcionario['fk_cargo_id'];
+
+                            array_push($franquia['funcionarios'],$franquiaFuncionario);
+                        }
+                    }
+
+                    foreach($dataCargo as $cargo){
+                        if($fkCargo == $cargo['id']){
+                            $franquiaCargo['nome'] = $cargo['nome'];
+
+                            array_push($franquia['cargo'],$franquiaCargo);
+                        }
+                    }
+
+                    foreach($dataTurma as $turma){
+                        if($idFranquia == $turma['fk_franquias_id']){
+                            $franquiaTurma['nome'] = $turma['nome'];
+                            $franquiaTurma['turno'] = $turma['turno'];
+                            $franquiaTurma['horario_inicial'] = $turma['horario_inicial'];
+                            $franquiaTurma['horario_termino'] = $turma['horario_termino'];
+                            $fkCategoria = $turma['fk_categoria_id'];
+                            $idTurma = $turma['id'];
+
+                            array_push($franquia['turma'],$franquiaTurma);
+                        }
+                    }
+
+                    foreach($dataCategoria as $categoria){
+                        if($fkCategoria == $categoria['id']){
+                            $franquiaCategoria['nome'] = $categoria['nome'];
+
+                            array_push($franquia['categoria'],$franquiaCategoria);
+                        }
+                    }
+
+                    foreach($dataAtleta as $atleta){
+                        if($idTurma == $atleta['fk_turma_id']){
+                            $franquiaAtleta['nome'] = $atleta['nome'];
+                            $franquiaAtleta['cpf'] = $atleta['cpf'];
+                            $franquiaAtleta['dt_nascimento'] = $atleta['dt_nascimento'];
+                            $franquiaAtleta['rua'] = $atleta['endereco_rua'];
+                            $franquiaAtleta['numero'] = $atleta['endereco_numero'];
+                            $franquiaAtleta['bairro'] = $atleta['endereco_bairro'];
+                            $franquiaAtleta['cep'] = $atleta['endereco_CEP'];
+                            $franquiaAtleta['naturalidade'] = $atleta['naturalidade'];
+                            $franquiaAtleta['problema_saude'] = $atleta['problema_saude'];
+                            $franquiaAtleta['alergia'] = $atleta['alergia'];
+                            $franquiaAtleta['medicamento'] = $atleta['medicamento'];
+                            $franquiaAtleta['telefone'] = $atleta['telefone'];
+                            $franquiaAtleta['email'] = $atleta['email'];
+
+                            array_push($franquia['atleta'],$franquiaAtleta);
+                        }
+                    }
+
+                    array_push($resultado,$franquia);
                 }
+
+                return $this->respond($resultado);
+    
+            } else{
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
+                return $this->respond($erro);
             }
-
-            foreach($dataFuncionario as $funcionario){
-                if($idFranquia == $funcionario['fk_franquias_id']){
-                    $franquiaFuncionario['nome'] = $funcionario['nome'];
-                    $franquiaFuncionario['dt_nascimento'] = $funcionario['dt_nascimento'];
-                    $franquiaFuncionario['cpf'] = $funcionario['cpf'];
-                    $franquiaFuncionario['rg'] = $funcionario['rg'];
-                    $franquiaFuncionario['naturalidade'] = $funcionario['naturalidade'];
-                    $franquiaFuncionario['rua'] = $funcionario['endereco_rua'];
-                    $franquiaFuncionario['numero'] = $funcionario['endereco_numero'];
-                    $franquiaFuncionario['bairro'] = $funcionario['endereco_bairro'];
-                    $franquiaFuncionario['telefone'] = $funcionario['telefone'];
-                    $franquiaFuncionario['email'] = $funcionario['email'];
-                    $fkCargo = $funcionario['fk_cargo_id'];
-
-                    array_push($franquia['funcionarios'],$franquiaFuncionario);
-                }
-            }
-
-            foreach($dataCargo as $cargo){
-                if($fkCargo == $cargo['id']){
-                    $franquiaCargo['nome'] = $cargo['nome'];
-
-                    array_push($franquia['cargo'],$franquiaCargo);
-                }
-            }
-
-            foreach($dataTurma as $turma){
-                if($idFranquia == $turma['fk_franquias_id']){
-                    $franquiaTurma['nome'] = $turma['nome'];
-                    $franquiaTurma['turno'] = $turma['turno'];
-                    $franquiaTurma['horario_inicial'] = $turma['horario_inicial'];
-                    $franquiaTurma['horario_termino'] = $turma['horario_termino'];
-                    $fkCategoria = $turma['fk_categoria_id'];
-                    $idTurma = $turma['id'];
-
-                    array_push($franquia['turma'],$franquiaTurma);
-                }
-            }
-
-            foreach($dataCategoria as $categoria){
-                if($fkCategoria == $categoria['id']){
-                    $franquiaCategoria['nome'] = $categoria['nome'];
-
-                    array_push($franquia['categoria'],$franquiaCategoria);
-                }
-            }
-
-            foreach($dataAtleta as $atleta){
-                if($idTurma == $atleta['fk_turma_id']){
-                    $franquiaAtleta['nome'] = $atleta['nome'];
-                    $franquiaAtleta['cpf'] = $atleta['cpf'];
-                    $franquiaAtleta['dt_nascimento'] = $atleta['dt_nascimento'];
-                    $franquiaAtleta['rua'] = $atleta['endereco_rua'];
-                    $franquiaAtleta['numero'] = $atleta['endereco_numero'];
-                    $franquiaAtleta['bairro'] = $atleta['endereco_bairro'];
-                    $franquiaAtleta['cep'] = $atleta['endereco_CEP'];
-                    $franquiaAtleta['naturalidade'] = $atleta['naturalidade'];
-                    $franquiaAtleta['problema_saude'] = $atleta['problema_saude'];
-                    $franquiaAtleta['alergia'] = $atleta['alergia'];
-                    $franquiaAtleta['medicamento'] = $atleta['medicamento'];
-                    $franquiaAtleta['telefone'] = $atleta['telefone'];
-                    $franquiaAtleta['email'] = $atleta['email'];
-
-                    array_push($franquia['atleta'],$franquiaAtleta);
-                }
-            }
-
-            array_push($resultado,$franquia);
+        } else{
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
+            ];
+            return $this->respond($erro);
         }
-
-        return $this->respond($resultado);
     }
 
     
     //Metodo Insert Franquia.
     public function create()
     {
-        $model = new FranquiaModel();
-        $data = $this->request->getJSON();
+        if($this->request->getHeader("Authorization")){
+            if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
 
-        if($model->insert($data)){
-            $response = [
-                'status'   => 201,
-                'error'    => null,
-                'messages' => [
-                    'success' => 'Dados salvos'
-                ]
+                $model = new FranquiaModel();
+                $data = $this->request->getJSON();
+
+                if($model->insert($data)){
+                    $response = [
+                        'status'   => 201,
+                        'error'    => null,
+                        'messages' => [
+                            'success' => 'Dados salvos'
+                        ]
+                    ];
+                    return $this->respondCreated($response);
+                }
+
+                return $this->fail($model->errors());
+    
+            } else{
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
+                return $this->respond($erro);
+            }
+        } else{
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
             ];
-            return $this->respondCreated($response);
+            return $this->respond($erro);
         }
-
-        return $this->fail($model->errors());
     }
 
     //Metodo Update Franquia.
     public function update($id = null)
     {
-        $model = new FranquiaModel();
-        $data = $this->request->getJSON();
-        
-        if($model->update($id, $data)){
-            $response = [
-                'status'   => 200,
-                'error'    => null,
-                'messages' => [
-                    'success' => 'Dados atualizados'
-                    ]
-                ];
-                return $this->respond($response);
-        };
+        if($this->request->getHeader("Authorization")){
+            if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
 
-        return $this->fail($model->errors());
+                $model = new FranquiaModel();
+                $data = $this->request->getJSON();
+                
+                if($model->update($id, $data)){
+                    $response = [
+                        'status'   => 200,
+                        'error'    => null,
+                        'messages' => [
+                            'success' => 'Dados atualizados'
+                            ]
+                        ];
+                        return $this->respond($response);
+                };
+
+                return $this->fail($model->errors());
+    
+            } else{
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
+                return $this->respond($erro);
+            }
+        } else{
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
+            ];
+            return $this->respond($erro);
+        }
     }
 
     //Metodo Delete Franquia.
     public function delete($id = null)
     {
-        $model = new FranquiaModel();
-        $data = $model->find($id);
-        
-        if($data){
-            $model->delete($id);
-            $response = [
-                'status'   => 200,
-                'error'    => null,
-                'messages' => [
-                    'success' => 'Dados removidos'
-                ]
+        if($this->request->getHeader("Authorization")){
+            if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
+
+                $model = new FranquiaModel();
+                $data = $model->find($id);
+                
+                if($data){
+                    $model->delete($id);
+                    $response = [
+                        'status'   => 200,
+                        'error'    => null,
+                        'messages' => [
+                            'success' => 'Dados removidos'
+                        ]
+                    ];
+                    return $this->respondDeleted($response);
+                }
+                
+                return $this->failNotFound('Nenhum dado encontrado com id '.$id);
+    
+            } else{
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
+                return $this->respond($erro);
+            }
+        } else{
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
             ];
-            return $this->respondDeleted($response);
+            return $this->respond($erro);
         }
-        
-        return $this->failNotFound('Nenhum dado encontrado com id '.$id);        
     }
 }
