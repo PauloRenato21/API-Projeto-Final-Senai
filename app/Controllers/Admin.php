@@ -98,6 +98,35 @@ class Admin extends ResourceController
 
     }
 
+    //Metodo show que tras um dado especifico pelo id dele Admin.
+    public function show($id = null)
+    {
+        if($this->request->getHeader("Authorization")){
+            if($this->key->validacaoToken($this->request->getHeader("Authorization")->getValue())){
+
+                $model = new AdminModel();
+                $data = $model->getWhere(['id' => $id])->getResult();
+
+                if($data){
+                    return $this->respond($data);
+                }
+
+                return $this->failNotFound('Nenhum dado encontrado com id '.$id);
+    
+            } else{
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
+                return $this->respond($erro);
+            }
+        } else{
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
+            ];
+            return $this->respond($erro);
+        }
+    }
+
     //Metedo Insert Admin.
     public function create()
     {
