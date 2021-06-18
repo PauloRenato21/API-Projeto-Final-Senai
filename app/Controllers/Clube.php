@@ -1,132 +1,194 @@
 <?php namespace App\Controllers;
 
+use App\Helpers\Validacao;
 use App\Models\ClubeModel;
 use App\Models\FranquiaModel;
 use CodeIgniter\RESTful\ResourceController;
-use Firebase\JWT\JWT;
-use Exception;
 
 class Clube extends ResourceController{
 
-    private function getKey(){
-        return 'TI2004M-03';
-    }
+    public $validacao;
 
+    public function __construct()
+    {
+        $this->validacao = new Validacao();
+    }
+    
     //Metedo Select Clube.
     public function index()
-    {
-        try {
-            $token = $this->request->getHeader("Authorization")->getValue();
-            $decoded = JWT::decode($token, $this->getKey(), array("HS256"));
+    {   
+        if($this->request->getHeader("Authorization")){
+            if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
 
-            if ($decoded) {
                 $model = new ClubeModel();
                 $data = $model->findAll();
-
+        
                 return $this->respond($data);
+    
+            } else{
+                $erro = 'Token Invalido';
+                return $this->respond($erro);
             }
-        } catch (Exception $ex) {
-            return $this->failUnauthorized("Acesso negado! Exception: " . $ex);
+        } else{
+            $erro = 'Authorization não encontrada';
+            return $this->respond($erro);
         }
+        
     }
 
     //Metodo que tras informações relacionadas a um Clube:
     //franquias.
     public function clubeFranquia(){
-        $modelClube = new ClubeModel();
-        $modelFranquia = new FranquiaModel();
 
-        $dataClube = $modelClube->findAll();
-        $dataFranquia = $modelFranquia->findAll();
+        if($this->request->getHeader("Authorization")){
+            if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
 
-        $resultado = [];
+                $modelClube = new ClubeModel();
+                $modelFranquia = new FranquiaModel();
 
-        foreach($dataClube as $clube){
-            $clube['franquias'] = array();
+                $dataClube = $modelClube->findAll();
+                $dataFranquia = $modelFranquia->findAll();
 
-            foreach($dataFranquia as $franquia){
-                if($clube['id'] == $franquia['fk_clube_futebol_id']){
-                    $clubeFranquia['id'] = $franquia['id'];
-                    $clubeFranquia['nome'] = $franquia['nome'];
-                    $clubeFranquia['cnpj'] = $franquia['cnpj'];
-                    $clubeFranquia['endereco_rua'] = $franquia['endereco_rua'];
-                    $clubeFranquia['endereco_numero'] = $franquia['endereco_numero'];
-                    $clubeFranquia['endereco_bairro'] = $franquia['endereco_bairro'];
-                    $clubeFranquia['endereco_CEP'] = $franquia['endereco_CEP'];
-                    $clubeFranquia['estado'] = $franquia['estado'];
-                    $clubeFranquia['cidade'] = $franquia['cidade'];
-                    $clubeFranquia['telefone'] = $franquia['telefone'];
-                    $clubeFranquia['email'] = $franquia['email'];
-                    $clubeFranquia['id_clube'] = $franquia['fk_clube_futebol_id'];
+                $resultado = [];
 
-                    array_push($clube['franquias'],$clubeFranquia);
+                foreach($dataClube as $clube){
+                    $clube['franquias'] = array();
+
+                    foreach($dataFranquia as $franquia){
+                        if($clube['id'] == $franquia['fk_clube_futebol_id']){
+                            $clubeFranquia['id'] = $franquia['id'];
+                            $clubeFranquia['nome'] = $franquia['nome'];
+                            $clubeFranquia['cnpj'] = $franquia['cnpj'];
+                            $clubeFranquia['endereco_rua'] = $franquia['endereco_rua'];
+                            $clubeFranquia['endereco_numero'] = $franquia['endereco_numero'];
+                            $clubeFranquia['endereco_bairro'] = $franquia['endereco_bairro'];
+                            $clubeFranquia['endereco_CEP'] = $franquia['endereco_CEP'];
+                            $clubeFranquia['estado'] = $franquia['estado'];
+                            $clubeFranquia['cidade'] = $franquia['cidade'];
+                            $clubeFranquia['telefone'] = $franquia['telefone'];
+                            $clubeFranquia['email'] = $franquia['email'];
+                            $clubeFranquia['id_clube'] = $franquia['fk_clube_futebol_id'];
+
+                            array_push($clube['franquias'],$clubeFranquia);
+                        }
+                    }
+
+                    array_push($resultado, $clube);
                 }
+
+                return $this->respond($resultado);
+    
+            } else{
+                $erro = 'Token Invalido';
+                return $this->respond($erro);
             }
 
-            array_push($resultado, $clube);
+        } else{
+            $erro = 'Authorization não encontrada';
+            return $this->respond($erro);
         }
-
-        return $this->respond($resultado);
     }
 
     //Metedo Insert Clube.
     public function create()
     {
-        $model = new ClubeModel();
-        $data = $this->request->getJSON();
+        if($this->request->getHeader("Authorization")){
+            if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
 
-        if($model->insert($data)){
-            $response = [
-                'status'   => 201,
-                'error'    => null,
-                'messages' => [
-                    'success' => 'Dados salvos'
-                ]
-            ];
-            return $this->respondCreated($response);
+                $model = new ClubeModel();
+                $data = $this->request->getJSON();
+
+                if($model->insert($data)){
+                    $response = [
+                        'status'   => 201,
+                        'error'    => null,
+                        'messages' => [
+                            'success' => 'Dados salvos'
+                        ]
+                    ];
+                    return $this->respondCreated($response);
+                }
+
+                return $this->fail($model->errors());
+    
+            } else{
+                $erro = 'Token Invalido';
+                return $this->respond($erro);
+            }
+            
+        } else{
+            $erro = 'Authorization não encontrada';
+            return $this->respond($erro);
         }
-
-        return $this->fail($model->errors());
     }
 
     //Metedo Update Clube.
     public function update($id = null)
     {
-        $model = new ClubeModel();
-        $data = $this->request->getJSON();
-        
-        if($model->update($id, $data)){
-            $response = [
-                'status'   => 200,
-                'error'    => null,
-                'messages' => [
-                    'success' => 'Dados atualizados'
-                    ]
-                ];
-                return $this->respond($response);
-        };
 
-        return $this->fail($model->errors());
+        if($this->request->getHeader("Authorization")){
+            if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
+
+                $model = new ClubeModel();
+                $data = $this->request->getJSON();
+                
+                if($model->update($id, $data)){
+                    $response = [
+                        'status'   => 200,
+                        'error'    => null,
+                        'messages' => [
+                            'success' => 'Dados atualizados'
+                            ]
+                        ];
+                        return $this->respond($response);
+                };
+
+                return $this->fail($model->errors());
+    
+            } else{
+                $erro = 'Token Invalido';
+                return $this->respond($erro);
+            }
+
+        } else{
+            $erro = 'Authorization não encontrada';
+            return $this->respond($erro);
+        }
     }
 
     //Metedo Delete Clube.
     public function delete($id = null)
     {
-        $model = new ClubeModel();
-        $data = $model->find($id);
-        
-        if($data){
-            $model->delete($id);
-            $response = [
-                'status'   => 200,
-                'error'    => null,
-                'messages' => [
-                    'success' => 'Dados removidos'
-                ]
-            ];
-            return $this->respondDeleted($response);
-        }
-        
-        return $this->failNotFound('Nenhum dado encontrado com id '.$id);        
+
+        if($this->request->getHeader("Authorization")){
+            if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
+
+                $model = new ClubeModel();
+                $data = $model->find($id);
+                
+                if($data){
+                    $model->delete($id);
+                    $response = [
+                        'status'   => 200,
+                        'error'    => null,
+                        'messages' => [
+                            'success' => 'Dados removidos'
+                        ]
+                    ];
+                    return $this->respondDeleted($response);
+                }
+                
+                return $this->failNotFound('Nenhum dado encontrado com id '.$id);
+
+    
+            } else{
+                $erro = 'Token Invalido';
+                return $this->respond($erro);
+            }
+            
+        } else{
+            $erro = 'Authorization não encontrada';
+            return $this->respond($erro);
+        }        
     }
 }
