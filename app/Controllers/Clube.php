@@ -3,16 +3,31 @@
 use App\Models\ClubeModel;
 use App\Models\FranquiaModel;
 use CodeIgniter\RESTful\ResourceController;
+use Firebase\JWT\JWT;
+use Exception;
 
 class Clube extends ResourceController{
+
+    private function getKey(){
+        return 'TI2004M-03';
+    }
 
     //Metedo Select Clube.
     public function index()
     {
-        $model = new ClubeModel();
-        $data = $model->findAll();
+        try {
+            $token = $this->request->getHeader("Authorization")->getValue();
+            $decoded = JWT::decode($token, $this->getKey(), array("HS256"));
 
-        return $this->respond($data);
+            if ($decoded) {
+                $model = new ClubeModel();
+                $data = $model->findAll();
+
+                return $this->respond($data);
+            }
+        } catch (Exception $ex) {
+            return $this->failUnauthorized("Acesso negado! Exception: " . $ex);
+        }
     }
 
     //Metodo que tras informações relacionadas a um Clube:
