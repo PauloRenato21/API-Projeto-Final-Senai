@@ -32,25 +32,46 @@ $routes->setAutoRoute(true);
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
-//$routes->get('/', 'Home::index');
+
+$routes->get('/', 'Home::index');
 
 $routes->resource('responsavel');
 $routes->resource('cargo');
 $routes->resource('categoria');
 $routes->resource('funcionario');
+
+$routes->resource('categoria',['placeholder' => '(:num)']);
+
 $routes->resource('admin',['placeholder' => '(:num)']);
 $routes->get('admin/login','admin::login');
+
 $routes->resource('atleta',['placeholder' => '(:num)']);
 $routes->get('atleta/informacoes','atleta::atletaTurmaResponsavel');
 $routes->get('atleta/pdf','atleta::atletaPdf');
+
 $routes->resource('franquia',['placeholder' => '(:num)']);
 $routes->get('franquia/informacoes','franquia::franquiaClube');
 $routes->get('franquia/pdf','franquia::franquiaPdf');
+
 $routes->resource('clube',['placeholder' => '(:num)']);
+$routes->get('clube/franquia','clube::clubeFranquia');
+
+$routes->resource('responsavel',['placeholder' => '(:num)']);
+$routes->get('responsavel/rat','responsavel::responsavelatletaturma');
+
+$routes->resource('cargo',['placeholder' => '(:num)']);
+$routes->get('cargo/cf','cargo::cargofuncionario');
+
+$routes->resource('funcionario',['placeholder' => '(:num)']);
+$routes->get('funcionario/ffc','funcionario::funcionariocargofranquia');
+$routes->get('funcionario/fct','funcionario::funcionariocargoturma');
+
+$routes->resource('turmafuncionario', ['placeholder' => '(:num)']);
+$routes->get('turmafuncionario/funcionario', 'turmafuncionario::funcionario');
+
 $routes->resource('turma',['placeholder' => '(:num)']);
 $routes->get('turma/informacoes','turma::turmaCategoriaFranquia');
 $routes->get('turma/pdf','turma::turmaPdf');
-$routes->get('clube/franquia','clube::clubeFranquia');
 
 /*
  * --------------------------------------------------------------------
