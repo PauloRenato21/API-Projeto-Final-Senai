@@ -216,6 +216,34 @@ class Franquia extends ResourceController{
         }
     }
 
+    //Metodo show que tras um dado especifico pelo id dele Franquia.
+    public function show($id = null)
+    {
+        if($this->request->getHeader("Authorization")){
+            if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
+
+                $model = new FranquiaModel();
+                $data = $model->getWhere(['id' => $id])->getResult();
+
+                if($data){
+                    return $this->respond($data);
+                }
+
+                return $this->failNotFound('Nenhum dado encontrado com id '.$id);
+    
+            } else{
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
+                return $this->respond($erro);
+            }
+        } else{
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
+            ];
+            return $this->respond($erro);
+        }
+    }
     
     //Metodo Insert Franquia.
     public function create()
