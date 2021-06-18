@@ -20,9 +20,25 @@ class Admin extends ResourceController
     //Metedo Select Admin.
 	public function index()
     {
-        $model = new AdminModel();
-        $data = $model->findAll();
-        return $this->respond($data);
+        if($this->request->getHeader("Authorization")){
+            if($this->key->validacaoToken($this->request->getHeader("Authorization")->getValue())){
+
+                $model = new AdminModel();
+                $data = $model->findAll();
+                return $this->respond($data);
+    
+            } else{
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
+                return $this->respond($erro);
+            }
+        } else{
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
+            ];
+            return $this->respond($erro);
+        }
     }
 
     public function login(){
@@ -85,61 +101,109 @@ class Admin extends ResourceController
     //Metedo Insert Admin.
     public function create()
     {
-        $model = new AdminModel();
-        $data = $this->request->getJSON();
+        if($this->request->getHeader("Authorization")){
+            if($this->key->validacaoToken($this->request->getHeader("Authorization")->getValue())){
 
-        if($model->insert($data)){
-            $response = [
-                'status'   => 201,
-                'error'    => null,
-                'messages' => [
-                    'success' => 'Dados salvos'
-                ]
+                $model = new AdminModel();
+                $data = $this->request->getJSON();
+
+                if($model->insert($data)){
+                    $response = [
+                        'status'   => 201,
+                        'error'    => null,
+                        'messages' => [
+                            'success' => 'Dados salvos'
+                        ]
+                    ];
+                    return $this->respondCreated($response);
+                }
+
+                return $this->fail($model->errors());
+    
+            } else{
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
+                return $this->respond($erro);
+            }
+        } else{
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
             ];
-            return $this->respondCreated($response);
+            return $this->respond($erro);
         }
-
-        return $this->fail($model->errors());
     }
 
     //Metedo Update Admin.
     public function update($id = null)
     {
-        $model = new AdminModel();
-        $data = $this->request->getJSON();
-        
-        if($model->update($id, $data)){
-            $response = [
-                'status'   => 200,
-                'error'    => null,
-                'messages' => [
-                    'success' => 'Dados atualizados'
-                    ]
-                ];
-                return $this->respond($response);
-        };
+        if($this->request->getHeader("Authorization")){
+            if($this->key->validacaoToken($this->request->getHeader("Authorization")->getValue())){
 
-        return $this->fail($model->errors());
+                $model = new AdminModel();
+                $data = $this->request->getJSON();
+                
+                if($model->update($id, $data)){
+                    $response = [
+                        'status'   => 200,
+                        'error'    => null,
+                        'messages' => [
+                            'success' => 'Dados atualizados'
+                            ]
+                        ];
+                        return $this->respond($response);
+                };
+
+                return $this->fail($model->errors());
+    
+            } else{
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
+                return $this->respond($erro);
+            }
+        } else{
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
+            ];
+            return $this->respond($erro);
+        }
     }
     
     //Metedo Delete Admin.
     public function delete($id = null)
     {
-        $model = new AdminModel();
-        $data = $model->find($id);
-        
-        if($data){
-            $model->delete($id);
-            $response = [
-                'status'   => 200,
-                'error'    => null,
-                'messages' => [
-                    'success' => 'Dados removidos'
-                ]
+        if($this->request->getHeader("Authorization")){
+            if($this->key->validacaoToken($this->request->getHeader("Authorization")->getValue())){
+
+                $model = new AdminModel();
+                $data = $model->find($id);
+                
+                if($data){
+                    $model->delete($id);
+                    $response = [
+                        'status'   => 200,
+                        'error'    => null,
+                        'messages' => [
+                            'success' => 'Dados removidos'
+                        ]
+                    ];
+                    return $this->respondDeleted($response);
+                }
+                
+                return $this->failNotFound('Nenhum dado encontrado com id '.$id);
+    
+            } else{
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
+                return $this->respond($erro);
+            }
+        } else{
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
             ];
-            return $this->respondDeleted($response);
+            return $this->respond($erro);
         }
-        
-        return $this->failNotFound('Nenhum dado encontrado com id '.$id);        
     }
 }
