@@ -1,193 +1,302 @@
-<?php namespace App\Controllers;
+<?php
 
+namespace App\Controllers;
+
+use App\Helpers\Validacao;
 use App\Models\AtletaModel;
 use App\Models\CategoriaModel;
 use App\Models\FranquiaModel;
 use App\Models\TurmaModel;
 use CodeIgniter\RESTful\ResourceController;
 
-class Turma extends ResourceController{
-    
+class Turma extends ResourceController
+{
+
+    public $validacao;
+
+    public function __construct()
+    {
+        $this->validacao = new Validacao();
+    }
+
     //Metedo Select Turma.
     public function index()
     {
-        $model = new TurmaModel();
-        $data = $model->findAll();
+        if ($this->request->getHeader("Authorization")) {
+            if ($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())) {
 
-        return $this->respond($data);
+                $model = new TurmaModel();
+                $data = $model->findAll();
+
+                return $this->respond($data);
+            } else {
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
+                return $this->respond($erro);
+            }
+        } else {
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
+            ];
+            return $this->respond($erro);
+        }
     }
 
     //Metodo que tras informações relacionadas com uma Turma: 
     //categoria, franquia.
-    public function turmaCategoriaFranquia(){
-        $modelTurma = new TurmaModel();
-        $modelCategoria = new CategoriaModel();
-        $modelFranquia = new FranquiaModel();
+    public function turmaCategoriaFranquia()
+    {
+        if ($this->request->getHeader("Authorization")) {
+            if ($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())) {
 
-        $dataTurma = $modelTurma->findAll();
-        $dataCategoria = $modelCategoria->findAll();
-        $dataFranquia = $modelFranquia->findAll();
+                $modelTurma = new TurmaModel();
+                $modelCategoria = new CategoriaModel();
+                $modelFranquia = new FranquiaModel();
 
-        $resultado = [];
+                $dataTurma = $modelTurma->findAll();
+                $dataCategoria = $modelCategoria->findAll();
+                $dataFranquia = $modelFranquia->findAll();
 
-        foreach($dataTurma as $turma){
-            $turma['categoria'] = array();
-            $turma['franquia'] = array();
+                $resultado = [];
 
-            foreach($dataCategoria as $categoria){
-                if($turma['fk_categoria_id'] == $categoria['id']){
-                    $turmaCategoria['nome'] = $categoria['nome'];
+                foreach ($dataTurma as $turma) {
+                    $turma['categoria'] = array();
+                    $turma['franquia'] = array();
 
-                    array_push($turma['categoria'],$turmaCategoria);
+                    foreach ($dataCategoria as $categoria) {
+                        if ($turma['fk_categoria_id'] == $categoria['id']) {
+                            $turmaCategoria['nome'] = $categoria['nome'];
+
+                            array_push($turma['categoria'], $turmaCategoria);
+                        }
+                    }
+
+                    foreach ($dataFranquia as $franquia) {
+                        if ($turma['fk_franquias_id'] == $franquia['id']) {
+                            $turmaFranquia['nome'] = $franquia['nome'];
+                            $turmaFranquia['cnpj'] = $franquia['cnpj'];
+                            $turmaFranquia['rua'] = $franquia['endereco_rua'];
+                            $turmaFranquia['numero'] = $franquia['endereco_numero'];
+                            $turmaFranquia['cep'] = $franquia['endereco_CEP'];
+                            $turmaFranquia['estado'] = $franquia['estado'];
+                            $turmaFranquia['cidade'] = $franquia['cidade'];
+                            $turmaFranquia['telefone'] = $franquia['telefone'];
+                            $turmaFranquia['email'] = $franquia['email'];
+
+                            array_push($turma['franquia'], $turmaFranquia);
+                        }
+                    }
+                    array_push($resultado, $turma);
                 }
-            }
 
-            foreach($dataFranquia as $franquia){
-                if($turma['fk_franquias_id'] == $franquia['id']){
-                    $turmaFranquia['nome'] = $franquia['nome'];
-                    $turmaFranquia['cnpj'] = $franquia['cnpj'];
-                    $turmaFranquia['rua'] = $franquia['endereco_rua'];
-                    $turmaFranquia['numero'] = $franquia['endereco_numero'];
-                    $turmaFranquia['cep'] = $franquia['endereco_CEP'];
-                    $turmaFranquia['estado'] = $franquia['estado'];
-                    $turmaFranquia['cidade'] = $franquia['cidade'];
-                    $turmaFranquia['telefone'] = $franquia['telefone'];
-                    $turmaFranquia['email'] = $franquia['email'];
-
-                    array_push($turma['franquia'],$turmaFranquia);
-                }
+                return $this->respond($resultado);
+            } else {
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
+                return $this->respond($erro);
             }
-            array_push($resultado,$turma);
+        } else {
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
+            ];
+            return $this->respond($erro);
         }
-        return $this->respond($resultado);
     }
 
-    public function turmaPdf(){
-        $modelTurma = new TurmaModel();
-        $modelCategoria = new CategoriaModel();
-        $modelFranquia = new FranquiaModel();
-        $modelAtleta = new AtletaModel();
+    public function turmaPdf()
+    {
+        if ($this->request->getHeader("Authorization")) {
+            if ($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())) {
 
-        $dataTurma = $modelTurma->findAll();
-        $dataCategoria = $modelCategoria->findAll();
-        $dataFranquia = $modelFranquia->findAll();
-        $dataAtleta = $modelAtleta->findAll();
+                $modelTurma = new TurmaModel();
+                $modelCategoria = new CategoriaModel();
+                $modelFranquia = new FranquiaModel();
+                $modelAtleta = new AtletaModel();
 
-        $resultado = [];
+                $dataTurma = $modelTurma->findAll();
+                $dataCategoria = $modelCategoria->findAll();
+                $dataFranquia = $modelFranquia->findAll();
+                $dataAtleta = $modelAtleta->findAll();
 
-        foreach($dataTurma as $turma){
-            $turma['categoria'] = array();
-            $turma['franquia'] = array();
-            $turma['atleta'] = array();
-            $idTurma = $turma['id'];
+                $resultado = [];
 
-            foreach($dataCategoria as $categoria){
-                if($turma['fk_categoria_id'] == $categoria['id']){
-                    $turmaCategoria['nome'] = $categoria['nome'];
+                foreach ($dataTurma as $turma) {
+                    $turma['categoria'] = array();
+                    $turma['franquia'] = array();
+                    $turma['atleta'] = array();
+                    $idTurma = $turma['id'];
 
-                    array_push($turma['categoria'],$turmaCategoria);
+                    foreach ($dataCategoria as $categoria) {
+                        if ($turma['fk_categoria_id'] == $categoria['id']) {
+                            $turmaCategoria['nome'] = $categoria['nome'];
+
+                            array_push($turma['categoria'], $turmaCategoria);
+                        }
+                    }
+
+                    foreach ($dataFranquia as $franquia) {
+                        if ($turma['fk_franquias_id'] == $franquia['id']) {
+                            $turmaFranquia['nome'] = $franquia['nome'];
+                            $turmaFranquia['cnpj'] = $franquia['cnpj'];
+                            $turmaFranquia['rua'] = $franquia['endereco_rua'];
+                            $turmaFranquia['numero'] = $franquia['endereco_numero'];
+                            $turmaFranquia['cep'] = $franquia['endereco_CEP'];
+                            $turmaFranquia['estado'] = $franquia['estado'];
+                            $turmaFranquia['cidade'] = $franquia['cidade'];
+                            $turmaFranquia['telefone'] = $franquia['telefone'];
+                            $turmaFranquia['email'] = $franquia['email'];
+
+                            array_push($turma['franquia'], $turmaFranquia);
+                        }
+                    }
+
+                    foreach ($dataAtleta as $atleta) {
+                        if ($idTurma == $atleta['fk_turma_id']) {
+                            $turmaAtleta['nome'] = $atleta['nome'];
+                            $turmaAtleta['cpf'] = $atleta['cpf'];
+                            $turmaAtleta['dt_nascimento'] = $atleta['dt_nascimento'];
+                            $turmaAtleta['rua'] = $atleta['endereco_rua'];
+                            $turmaAtleta['numero'] = $atleta['endereco_numero'];
+                            $turmaAtleta['bairro'] = $atleta['endereco_bairro'];
+                            $turmaAtleta['cep'] = $atleta['endereco_CEP'];
+                            $turmaAtleta['naturalidade'] = $atleta['naturalidade'];
+                            $turmaAtleta['problema_saude'] = $atleta['problema_saude'];
+                            $turmaAtleta['alergia'] = $atleta['alergia'];
+                            $turmaAtleta['medicamento'] = $atleta['medicamento'];
+                            $turmaAtleta['telefone'] = $atleta['telefone'];
+                            $turmaAtleta['email'] = $atleta['email'];
+
+                            array_push($turma['atleta'], $turmaAtleta);
+                        }
+                    }
+
+                    array_push($resultado, $turma);
                 }
+
+                return $this->respond($resultado);
+
+            } else {
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
+                return $this->respond($erro);
             }
-
-            foreach($dataFranquia as $franquia){
-                if($turma['fk_franquias_id'] == $franquia['id']){
-                    $turmaFranquia['nome'] = $franquia['nome'];
-                    $turmaFranquia['cnpj'] = $franquia['cnpj'];
-                    $turmaFranquia['rua'] = $franquia['endereco_rua'];
-                    $turmaFranquia['numero'] = $franquia['endereco_numero'];
-                    $turmaFranquia['cep'] = $franquia['endereco_CEP'];
-                    $turmaFranquia['estado'] = $franquia['estado'];
-                    $turmaFranquia['cidade'] = $franquia['cidade'];
-                    $turmaFranquia['telefone'] = $franquia['telefone'];
-                    $turmaFranquia['email'] = $franquia['email'];
-
-                    array_push($turma['franquia'],$turmaFranquia);
-                }
-            }
-
-            foreach($dataAtleta as $atleta){
-                if($idTurma == $atleta['fk_turma_id']){
-                    $turmaAtleta['nome'] = $atleta['nome'];
-                    $turmaAtleta['cpf'] = $atleta['cpf'];
-                    $turmaAtleta['dt_nascimento'] = $atleta['dt_nascimento'];
-                    $turmaAtleta['rua'] = $atleta['endereco_rua'];
-                    $turmaAtleta['numero'] = $atleta['endereco_numero'];
-                    $turmaAtleta['bairro'] = $atleta['endereco_bairro'];
-                    $turmaAtleta['cep'] = $atleta['endereco_CEP'];
-                    $turmaAtleta['naturalidade'] = $atleta['naturalidade'];
-                    $turmaAtleta['problema_saude'] = $atleta['problema_saude'];
-                    $turmaAtleta['alergia'] = $atleta['alergia'];
-                    $turmaAtleta['medicamento'] = $atleta['medicamento'];
-                    $turmaAtleta['telefone'] = $atleta['telefone'];
-                    $turmaAtleta['email'] = $atleta['email'];
-
-                    array_push($turma['atleta'],$turmaAtleta);
-                }
-            }
-
-            array_push($resultado,$turma);
+        } else {
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
+            ];
+            return $this->respond($erro);
         }
-        return $this->respond($resultado);
     }
 
     //Metedo Insert Clube.
     public function create()
     {
-        $model = new TurmaModel();
-        $data = $this->request->getJSON();
+        if($this->request->getHeader("Authorization")){
+            if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
 
-        if($model->insert($data)){
-            $response = [
-                'status'   => 201,
-                'error'    => null,
-                'messages' => [
-                    'success' => 'Dados salvos'
-                ]
+                $model = new TurmaModel();
+                $data = $this->request->getJSON();
+
+                if ($model->insert($data)) {
+                    $response = [
+                        'status'   => 201,
+                        'error'    => null,
+                        'messages' => [
+                            'success' => 'Dados salvos'
+                        ]
+                    ];
+                    return $this->respondCreated($response);
+                }
+
+                return $this->fail($model->errors());
+    
+            } else{
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
+                return $this->respond($erro);
+            }
+        } else{
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
             ];
-            return $this->respondCreated($response);
+            return $this->respond($erro);
         }
-
-        return $this->fail($model->errors());
     }
 
     //Metedo Update Clube.
     public function update($id = null)
     {
-        $model = new TurmaModel();
-        $data = $this->request->getJSON();
-        
-        if($model->update($id, $data)){
-            $response = [
-                'status'   => 200,
-                'error'    => null,
-                'messages' => [
-                    'success' => 'Dados atualizados'
-                    ]
-                ];
-                return $this->respond($response);
-        };
+        if($this->request->getHeader("Authorization")){
+            if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
 
-        return $this->fail($model->errors());
+                $model = new TurmaModel();
+                $data = $this->request->getJSON();
+
+                if ($model->update($id, $data)) {
+                    $response = [
+                        'status'   => 200,
+                        'error'    => null,
+                        'messages' => [
+                            'success' => 'Dados atualizados'
+                        ]
+                    ];
+                    return $this->respond($response);
+                };
+
+                return $this->fail($model->errors());
+    
+            } else{
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
+                return $this->respond($erro);
+            }
+        } else{
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
+            ];
+            return $this->respond($erro);
+        }
     }
 
     //Metedo Delete Clube.
     public function delete($id = null)
     {
-        $model = new TurmaModel();
-        $data = $model->find($id);
-        
-        if($data){
-            $model->delete($id);
-            $response = [
-                'status'   => 200,
-                'error'    => null,
-                'messages' => [
-                    'success' => 'Dados removidos'
-                ]
+        if($this->request->getHeader("Authorization")){
+            if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
+
+                $model = new TurmaModel();
+                $data = $model->find($id);
+
+                if ($data) {
+                    $model->delete($id);
+                    $response = [
+                        'status'   => 200,
+                        'error'    => null,
+                        'messages' => [
+                            'success' => 'Dados removidos'
+                        ]
+                    ];
+                    return $this->respondDeleted($response);
+                }
+
+                return $this->failNotFound('Nenhum dado encontrado com id ' . $id);
+    
+            } else{
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
+                return $this->respond($erro);
+            }
+        } else{
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
             ];
-            return $this->respondDeleted($response);
+            return $this->respond($erro);
         }
-        
-        return $this->failNotFound('Nenhum dado encontrado com id '.$id);        
     }
 }
