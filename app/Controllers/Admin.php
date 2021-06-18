@@ -1,14 +1,21 @@
 <?php namespace App\Controllers;
 
+use App\Helpers\Validacao;
 use App\Models\AdminModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\RESTful\ResourceController;
 use Firebase\JWT\JWT;
-use Exception;
 
 class Admin extends ResourceController
-{
+{   
     use ResponseTrait;
+
+    protected $key;
+
+    public function __construct()
+    {
+        $this->key = new Validacao();
+    }
 
     //Metedo Select Admin.
 	public function index()
@@ -16,10 +23,6 @@ class Admin extends ResourceController
         $model = new AdminModel();
         $data = $model->findAll();
         return $this->respond($data);
-    }
-
-    private function getKey(){
-        return 'TI2004M-03';
     }
 
     public function login(){
@@ -30,7 +33,7 @@ class Admin extends ResourceController
         if(!empty($data)){
             if($this->request->getVar('password') == $data['password']){
 
-                $key = $this->getKey();
+                $key = $this->key->getKey();
 
                 $iat = time(); // retorna em timestamp
                 $nbf = $iat + 10;
