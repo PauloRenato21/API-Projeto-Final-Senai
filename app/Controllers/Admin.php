@@ -3,6 +3,8 @@
 use App\Models\AdminModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\RESTful\ResourceController;
+use Firebase\JWT\JWT;
+use Exception;
 
 class Admin extends ResourceController
 {
@@ -14,6 +16,67 @@ class Admin extends ResourceController
         $model = new AdminModel();
         $data = $model->findAll();
         return $this->respond($data);
+    }
+
+    private function getKey(){
+        return 'TI2004M-03';
+    }
+
+    public function login(){
+        $modalAdmin = new AdminModel();
+
+        $data = $modalAdmin->where('user', $this->request->getVar('user'))->first();
+
+        if(!empty($data)){
+            if($this->request->getVar('password') == $data['password']){
+
+                $key = $this->getKey();
+
+                $iat = time(); // retorna em timestamp
+                $nbf = $iat + 10;
+                $exp = $iat + 3600;
+
+                $payload = array(
+                    "iss" => "api_escola-futebol",
+                    "aud" => "diversos_app",
+                    "iat" => $iat, // issued at
+                    "nbf" => $nbf, //not before in seconds
+                    "exp" => $exp // expire time in seconds
+                );
+
+                $token = JWT::encode($payload, $key);
+
+                $response = [
+                    'status' => 200,
+                    'error' => false,
+                    'messages' => 'Usuário logado com sucesso',
+                    'data' => [
+                        'token' => $token
+                    ]
+                ];
+                return $this->respondCreated($response);
+
+            } else {
+
+                $response = [
+                    'status' => 500,
+                    'error' => true,
+                    'messages' => 'Login inválido',
+                    'data' => []
+                ];
+                return $this->respondCreated($response);
+            }
+
+        } else {
+            $response = [
+                'status' => 500,
+                'error' => true,
+                'messages' => 'Login inválido',
+                'data' => []
+            ];
+            return $this->respondCreated($response);
+        }
+
     }
 
     //Metedo Insert Admin.
