@@ -39,6 +39,7 @@ $routes->resource('cargo');
 $routes->resource('categoria');
 $routes->resource('funcionario');
 $routes->resource('admin',['placeholder' => '(:num)']);
+$routes->get('admin/login','admin::login');
 $routes->resource('atleta',['placeholder' => '(:num)']);
 $routes->get('atleta/informacoes','atleta::atletaTurmaResponsavel');
 $routes->get('atleta/pdf','atleta::atletaPdf');
@@ -48,6 +49,7 @@ $routes->get('franquia/pdf','franquia::franquiaPdf');
 $routes->resource('clube',['placeholder' => '(:num)']);
 $routes->resource('turma',['placeholder' => '(:num)']);
 $routes->get('turma/informacoes','turma::turmaCategoriaFranquia');
+$routes->get('turma/pdf','turma::turmaPdf');
 $routes->get('clube/franquia','clube::clubeFranquia');
 
 /*
