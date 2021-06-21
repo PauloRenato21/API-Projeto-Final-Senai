@@ -15,6 +15,7 @@ class FranquiaModel extends Model{
         'endereco_CEP' => 'required|max_length[10]',
         'estado' => 'required|max_length[50]',
         'cidade' => 'required|max_length[50]',
-        'telefone' => 'required|max_length[10]|is_natural'
+        'telefone' => 'required|max_length[10]|is_natural',
+        'fk_clube_futebol_id' => 'required|is_natural'
     ];
 }
