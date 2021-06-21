@@ -179,7 +179,7 @@ class Cargo extends ResourceController
         }
     }
 
-    public function cargofuncionario(){
+    public function cargoPdf(){
         if($this->request->getHeader("Authorization")){
             if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
 
