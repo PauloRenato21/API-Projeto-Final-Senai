@@ -16,7 +16,6 @@ class AtletaModel extends Model{
         'endereco_CEP' => 'required|max_length[10]',
         'naturalidade' => 'required|max_length[50]',
         'telefone' => 'required|is_natural',
-        'fk_turma_id' => 'required|is_natural',
-        'fk_Responsavel' => 'is_natural'
+        'fk_turma_id' => 'required|is_natural'
     ];
 }
