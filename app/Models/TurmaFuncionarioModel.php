@@ -5,7 +5,8 @@ use CodeIgniter\Model;
 class TurmaFuncionarioModel extends Model
 {
     protected $table = 'turma_funcionario';
-    protected $primaryKey = ['id'];
+    protected $primaryKey = 'id';
+    protected $allowedFields = ['fk_turma_id','fk_funcionario_id'];
     
     public function getAllTurmaFuncionario(){
         return $this->join('funcionario', 'turma_funcionario.fk_funcionario_id = funcionario.id')
