@@ -182,7 +182,7 @@ class Funcionario extends ResourceController
         }
     }
 
-    public function funcionariocargofranquia(){
+    public function funcionarioPdf(){
         if($this->request->getHeader("Authorization")){
             if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
 
