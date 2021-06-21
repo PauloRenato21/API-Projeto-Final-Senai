@@ -41,7 +41,84 @@ class Responsavel extends ResourceController
             return $this->respond($erro);
         }
     }
- 
+
+    public function responsavelPdf(){
+        if($this->request->getHeader("Authorization")){
+            if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
+
+                $responsavelModel = new ResponsavelModel();
+                $atletaModel = new AtletaModel();
+                $turmaModel = new TurmaModel();
+                
+                $dataresponsavel = $responsavelModel->findAll();
+                $dataatleta = $atletaModel->findAll();
+                $dataturma = $turmaModel->findAll();
+                
+                $resultado = [];
+                
+                foreach ($dataresponsavel as $responsavel){
+                    $responsavel['atleta'] = array();
+                    $responsavel['turma'] = array();
+                
+                    foreach ($dataatleta as $at){
+                        if ($responsavel['id'] == $at['fk_Responsavel_id']){
+                
+                            $responsavelatleta['id'] = $at['id'];
+                            $responsavelatleta['nome'] = $at['nome'];
+                            $responsavelatleta['cpf'] = $at['cpf'];
+                            $responsavelatleta['dt_nascimento'] = $at['dt_nascimento'];
+                            $responsavelatleta['endereco_rua'] = $at['endereco_rua'];
+                            $responsavelatleta['endereco_numero'] = $at['endereco_numero'];
+                            $responsavelatleta['endereco_bairro'] = $at['endereco_bairro'];
+                            $responsavelatleta['endereco_CEP'] = $at['endereco_CEP'];
+                            $responsavelatleta['naturalidade'] = $at['naturalidade'];
+                            $responsavelatleta['problema_saude'] = $at['problema_saude'];
+                            $responsavelatleta['alergia'] = $at['alergia'];
+                            $responsavelatleta['medicamento'] = $at['medicamento'];
+                            $responsavelatleta['telefone'] = $at['telefone'];
+                            $responsavelatleta['email'] = $at['email'];
+
+                            $idTurma = $at['fk_turma_id'];
+                            $fkResponsavel = $at['fk_Responsavel_id'];
+                            
+                            array_push($responsavel['atleta'], $responsavelatleta);
+                        }
+                    }
+
+                    foreach ($dataturma as $turma){
+                        if($responsavel['id'] == $fkResponsavel){
+                            if ($idTurma == $turma['id']){
+
+                                $atletaturma['id'] = $turma['id'];
+                                $atletaturma['nome'] = $turma['nome'];
+                                $atletaturma['turno'] = $turma['turno'];
+                                $atletaturma['horario_inicial'] = $turma['horario_inicial'];
+                                $atletaturma['horario_termino'] = $turma['horario_termino'];
+                    
+                                array_push($responsavel['turma'], $atletaturma);
+                            }
+                        }
+                    }
+
+                    array_push($resultado, $responsavel);
+                }
+
+                return $this->respond($resultado);
+    
+            } else{
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
+                return $this->respond($erro);
+            }
+        } else{
+            $erro = [
+                'Erro' => 'Authorization212|Token não encontrado'
+            ];
+            return $this->respond($erro);
+        }
+    }
+
     // lista um responsavels
     public function show($id = null)
     {
@@ -179,76 +256,4 @@ class Responsavel extends ResourceController
             return $this->respond($erro);
         }
     }
-
-    public function responsavelatletaturma(){
-        if($this->request->getHeader("Authorization")){
-            if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
-
-                $responsavelModel = new ResponsavelModel();
-                $atletaModel = new AtletaModel();
-                $turmaModel = new TurmaModel();
-                
-                $dataresponsavel = $responsavelModel->findAll();
-                $dataatleta = $atletaModel->findAll();
-                $dataturma = $turmaModel->findAll();
-                
-                $resultado = [];
-                
-                foreach ($dataresponsavel as $responsavel){
-                    $responsavel['atleta'] = array();
-                    $responsavel['turma'] = array();
-                
-                    foreach ($dataatleta as $at){
-                        if ($responsavel['id'] == $at['fk_Responsavel_id']){
-                
-                            $responsavelatleta['id'] = $at['id'];
-                            $responsavelatleta['nome'] = $at['nome'];
-                            $responsavelatleta['cpf'] = $at['cpf'];
-                            $responsavelatleta['dt_nascimento'] = $at['dt_nascimento'];
-                            $responsavelatleta['endereco_rua'] = $at['endereco_rua'];
-                            $responsavelatleta['endereco_numero'] = $at['endereco_numero'];
-                            $responsavelatleta['endereco_bairro'] = $at['endereco_bairro'];
-                            $responsavelatleta['endereco_CEP'] = $at['endereco_CEP'];
-                            $responsavelatleta['naturalidade'] = $at['naturalidade'];
-                            $responsavelatleta['problema_saude'] = $at['problema_saude'];
-                            $responsavelatleta['alergia'] = $at['alergia'];
-                            $responsavelatleta['medicamento'] = $at['medicamento'];
-                            $responsavelatleta['telefone'] = $at['telefone'];
-                            $responsavelatleta['email'] = $at['email'];
-                            $id_atleta = $at['fk_turma_id'];
-                            array_push($responsavel['atleta'], $responsavelatleta);
-                        }
-                    }
-
-                    foreach ($dataturma as $tur){
-                        if ($id_atleta == $tur['id']){
-
-                            $atletaturma['id'] = $tur['id'];
-                            $atletaturma['nome'] = $tur['nome'];
-                            $atletaturma['turno'] = $tur['turno'];
-                            $atletaturma['horario_inicial'] = $tur['horario_inicial'];
-                            $atletaturma['horario_termino'] = $tur['horario_termino'];
-                
-                            array_push($responsavel['turma'], $atletaturma);
-                        }
-                    }
-                    array_push($resultado, $responsavel);
-                }
-
-                return $this->respond($resultado);
-    
-            } else{
-                $erro = [
-                    'Erro' => 'Token Inválido'
-                ];
-                return $this->respond($erro);
-            }
-        } else{
-            $erro = [
-                'Erro' => 'Authorization|Token não encontrado'
-            ];
-            return $this->respond($erro);
-        }
-    }
- 
 }
