@@ -47,7 +47,7 @@ class Atleta extends ResourceController{
             }
 
             foreach($dataResponsavel as $responsavel){
-                if($atleta['fk_responsavel'] == $responsavel['id']){
+                if($atleta['fk_Responsavel_id'] == $responsavel['id']){
                     $atletaRespon['nome'] = $responsavel['nome'];
                     $atletaRespon['cpf'] = $responsavel['cpf'];
                     $atletaRespon['grau_parentesco'] = $responsavel['grau_parentesco'];
@@ -93,40 +93,47 @@ class Atleta extends ResourceController{
                     $atletaTurma['turno'] = $turma['turno'];
                     $atletaTurma['horario_inicial'] = $turma['horario_inicial'];
                     $atletaTurma['horario_termino'] = $turma['horario_termino'];
+
                     $fkFranquia = $turma['fk_franquias_id'];
+                    $idTurma = $turma['id'];
+
                     array_push($atleta['turma'],$atletaTurma);
                 }
             }
 
             foreach($dataFranquia as $franquia){
-                if($fkFranquia == $franquia['id']){
-                    $atletaFranquia['nome'] = $franquia['nome'];
-                    $atletaFranquia['cnpj'] = $franquia['cnpj'];
-                    $atletaFranquia['rua'] = $franquia['endereco_rua'];
-                    $atletaFranquia['numero'] = $franquia['endereco_numero'];
-                    $atletaFranquia['bairro'] = $franquia['endereco_bairro'];
-                    $atletaFranquia['cep'] = $franquia['endereco_CEP'];
-                    $atletaFranquia['estado'] = $franquia['estado'];
-                    $atletaFranquia['cidade'] = $franquia['cidade'];
-                    $atletaFranquia['telefone'] = $franquia['telefone'];
-                    $atletaFranquia['email'] = $franquia['email'];
-                    $fkClube = $franquia['fk_clube_futebol_id'];
-
-                    array_push($atleta['franquia'],$atletaFranquia);
+                if($atleta['fk_turma_id'] == $idTurma){
+                    if($fkFranquia == $franquia['id']){
+                        $atletaFranquia['nome'] = $franquia['nome'];
+                        $atletaFranquia['cnpj'] = $franquia['cnpj'];
+                        $atletaFranquia['rua'] = $franquia['endereco_rua'];
+                        $atletaFranquia['numero'] = $franquia['endereco_numero'];
+                        $atletaFranquia['bairro'] = $franquia['endereco_bairro'];
+                        $atletaFranquia['cep'] = $franquia['endereco_CEP'];
+                        $atletaFranquia['estado'] = $franquia['estado'];
+                        $atletaFranquia['cidade'] = $franquia['cidade'];
+                        $atletaFranquia['telefone'] = $franquia['telefone'];
+                        $atletaFranquia['email'] = $franquia['email'];
+                        $fkClube = $franquia['fk_clube_futebol_id'];
+    
+                        array_push($atleta['franquia'],$atletaFranquia);
+                    }
                 }
             }
 
             foreach($dataClube as $clube){
-                if($fkClube == $clube['id']){
-                    $atletaClube['nome'] = $clube['nome'];
-                    $atletaClube['cnpj'] = $clube['cnpj'];
-
-                    array_push($atleta['clube'],$atletaClube);
+                if($atleta['fk_turma_id'] == $idTurma){
+                    if($fkClube == $clube['id']){
+                        $atletaClube['nome'] = $clube['nome'];
+                        $atletaClube['cnpj'] = $clube['cnpj'];
+    
+                        array_push($atleta['clube'],$atletaClube);
+                    }
                 }
             }
 
             foreach($dataResponsavel as $responsavel){
-                if($atleta['fk_responsavel'] == $responsavel['id']){
+                if($atleta['fk_Responsavel_id'] == $responsavel['id']){
                     $atletaRespon['nome'] = $responsavel['nome'];
                     $atletaRespon['cpf'] = $responsavel['cpf'];
                     $atletaRespon['grau_parentesco'] = $responsavel['grau_parentesco'];
