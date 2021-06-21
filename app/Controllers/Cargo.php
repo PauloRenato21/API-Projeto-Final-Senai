@@ -191,20 +191,28 @@ class Cargo extends ResourceController
                 
                 $resultado = [];
                 
-                foreach ($datafuncionario as $funcionario){
-                    $funcionario['cargo'] = array();
+                foreach ($datacargo as $cargo){
+                    $cargo['funcionario'] = array();
                 
-                    foreach ($datacargo as $cl){
-                        if ($funcionario['fk_cargo_id'] == $cl['id']){
+                    foreach ($datafuncionario as $funcionario){
+                        if ($cargo['id'] == $funcionario['fk_cargo_id']){
                 
-                            $funcionariocargo['id'] = $cl['id'];
-                            $funcionariocargo['nome'] = $cl['nome'];
+                            $cargoFuncionario['nome'] = $funcionario['nome'];
+                            $cargoFuncionario['dt_nascimento'] = $funcionario['dt_nascimento'];
+                            $cargoFuncionario['cpf'] = $funcionario['cpf'];
+                            $cargoFuncionario['rg'] = $funcionario['rg'];
+                            $cargoFuncionario['naturalidade'] = $funcionario['naturalidade'];
+                            $cargoFuncionario['rua'] = $funcionario['endereco_rua'];
+                            $cargoFuncionario['numero'] = $funcionario['endereco_numero'];
+                            $cargoFuncionario['bairro'] = $funcionario['endereco_bairro'];
+                            $cargoFuncionario['telefone'] = $funcionario['telefone'];
+                            $cargoFuncionario['email'] = $funcionario['email'];
                 
-                            array_push($funcionario['cargo'], $funcionariocargo);
+                            array_push($cargo['funcionario'], $cargoFuncionario);
                         }
                     }
                 
-                    array_push($resultado, $funcionario);
+                    array_push($resultado, $cargo);
                 }
                 
                 return $this->respond($resultado);
