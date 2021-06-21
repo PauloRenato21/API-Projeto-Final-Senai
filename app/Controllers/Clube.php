@@ -101,7 +101,7 @@ class Clube extends ResourceController{
     public function show($id = null)
     {
         if($this->request->getHeader("Authorization")){
-            if($this->key->validacaoToken($this->request->getHeader("Authorization")->getValue())){
+            if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
 
                 $model = new ClubeModel();
                 $data = $model->getWhere(['id' => $id])->getResult();
