@@ -179,7 +179,7 @@ class TurmaFuncionario extends ResourceController
         }
     }
 
-    public function Funcionario(){
+    public function funcionarioTurma(){
         if($this->request->getHeader("Authorization")){
             if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
 
