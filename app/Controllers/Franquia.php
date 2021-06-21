@@ -124,14 +124,13 @@ class Franquia extends ResourceController{
                         if($franquia['fk_clube_futebol_id'] == $clube['id']){
                             $franquiaClube['nome'] = $clube['nome'];
                             $franquiaClube['cnpj'] = $clube['cnpj'];
-                            $idFranquia = $franquia['id'];
 
                             array_push($franquia['clube'],$franquiaClube);
                         }
                     }
 
                     foreach($dataFuncionario as $funcionario){
-                        if($idFranquia == $funcionario['fk_franquias_id']){
+                        if($franquia['id'] == $funcionario['fk_franquias_id']){
                             $franquiaFuncionario['nome'] = $funcionario['nome'];
                             $franquiaFuncionario['dt_nascimento'] = $funcionario['dt_nascimento'];
                             $franquiaFuncionario['cpf'] = $funcionario['cpf'];
@@ -142,6 +141,8 @@ class Franquia extends ResourceController{
                             $franquiaFuncionario['bairro'] = $funcionario['endereco_bairro'];
                             $franquiaFuncionario['telefone'] = $funcionario['telefone'];
                             $franquiaFuncionario['email'] = $funcionario['email'];
+                            
+                            $fkFranquia = $funcionario['fk_franquias_id'];
                             $fkCargo = $funcionario['fk_cargo_id'];
 
                             array_push($franquia['funcionarios'],$franquiaFuncionario);
@@ -149,15 +150,18 @@ class Franquia extends ResourceController{
                     }
 
                     foreach($dataCargo as $cargo){
-                        if($fkCargo == $cargo['id']){
-                            $franquiaCargo['nome'] = $cargo['nome'];
+                        if($franquia['id'] == $fkFranquia){
+                            if($fkCargo == $cargo['id']){
 
-                            array_push($franquia['cargo'],$franquiaCargo);
+                                $franquiaCargo['nome'] = $cargo['nome'];
+    
+                                array_push($franquia['cargo'],$franquiaCargo);
+                            }
                         }
                     }
 
                     foreach($dataTurma as $turma){
-                        if($idFranquia == $turma['fk_franquias_id']){
+                        if($franquia['id'] == $turma['fk_franquias_id']){
                             $franquiaTurma['nome'] = $turma['nome'];
                             $franquiaTurma['turno'] = $turma['turno'];
                             $franquiaTurma['horario_inicial'] = $turma['horario_inicial'];
