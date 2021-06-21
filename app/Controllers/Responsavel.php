@@ -113,7 +113,7 @@ class Responsavel extends ResourceController
             }
         } else{
             $erro = [
-                'Erro' => 'Authorization212|Token não encontrado'
+                'Erro' => 'Authorization|Token não encontrado'
             ];
             return $this->respond($erro);
         }
