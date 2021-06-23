@@ -47,7 +47,12 @@ class Admin extends ResourceController
         $data = $modalAdmin->where('user', $this->request->getVar('user'))->first();
 
         if(!empty($data)){
-            if($this->request->getVar('password') == $data['password']){
+
+            $user = $this->request->getVar('user');
+            $password = $this->request->getVar('password');
+            $password_md5 = md5($user.$password);
+
+            if($password_md5 == $data['password']){
 
                 $key = $this->key->getKey();
 
@@ -134,7 +139,16 @@ class Admin extends ResourceController
             if($this->key->validacaoToken($this->request->getHeader("Authorization")->getValue())){
 
                 $model = new AdminModel();
-                $data = $this->request->getJSON();
+                $nome = $this->request->getVar('nome');
+                $user = $this->request->getVar('user');
+                $password = $this->request->getVar('password');
+                $password_md5 = md5($user.$password);
+                
+                $data = [
+                    'nome' => $nome,
+                    'user' => $user,
+                    'password' => $password_md5
+                ];
 
                 if($model->insert($data)){
                     $response = [
