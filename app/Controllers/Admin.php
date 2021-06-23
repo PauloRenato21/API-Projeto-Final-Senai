@@ -141,8 +141,7 @@ class Admin extends ResourceController
                 $model = new AdminModel();
                 $nome = $this->request->getVar('nome');
                 $user = $this->request->getVar('user');
-                $password = $this->request->getVar('password');
-                $password_md5 = md5($user.$password);
+                $password_md5 = md5($user.$this->request->getVar('password'));
                 
                 $data = [
                     'nome' => $nome,
