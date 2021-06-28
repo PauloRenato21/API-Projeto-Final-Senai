@@ -10,6 +10,7 @@ use App\Models\ClubeModel;
 
 class AtletaSearch extends ResourceController{
 
+    //Metodo que pega o buscador e pesquisa a existência dele no BD;
     public function index()
     {
         $modelAtleta = new AtletaModel();
@@ -38,6 +39,8 @@ class AtletaSearch extends ResourceController{
         }
     }
 
+    //Metodo que realiza a pesquisa e a existência do atleta no BD e a relação do
+    //atleta com o buscador;
     public function serchAtleta($data){
         $modelAtleta = new AtletaModel();
 
@@ -70,6 +73,7 @@ class AtletaSearch extends ResourceController{
         }
     }
 
+    //Metodo que relaciona as informações do atleta e retorna ela;
     public function usuarioSearchAtleta($id = null){
         $modelAtleta = new AtletaModel();
         $modelTurma = new TurmaModel();
