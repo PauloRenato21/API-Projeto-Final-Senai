@@ -43,7 +43,8 @@ $routes->get('admin/login','admin::login');
 $routes->resource('atleta',['placeholder' => '(:num)']);
 $routes->get('atleta/informacoes','atleta::atletaTurmaResponsavel');
 $routes->get('atleta/pdf','atleta::atletaPdf');
-$routes->get('atleta/pesquisa/(:num)','atleta::usuarioSearchAtleta/$1');
+
+$routes->resource('atletasearch',['placeholder'=>'(:num)']);
 
 $routes->resource('franquia',['placeholder' => '(:num)']);
 $routes->get('franquia/informacoes','franquia::franquiaClube');
