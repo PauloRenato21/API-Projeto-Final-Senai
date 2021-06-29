@@ -5,7 +5,7 @@
 
 <p>Projeto realizado para o projeto final do Senai MG do curso Técnico em Informática para Internet.</p>
 
-<p>API criada usando o framework  <a style="text-decoration:none; color:#dd4814;"><b>[Codeigniter](https://www.codeigniter.com/user_guide/index.html)</b></a>, como ligação ao banco de dados.</p>
+API criada usando o framework [Codeigniter](https://www.codeigniter.com/user_guide/index.html), como ligação ao banco de dados.
 
 
 
