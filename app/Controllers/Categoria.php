@@ -14,6 +14,7 @@ class Categoria extends ResourceController
     public function __construct()
     {
         $this->validacao = new Validacao();
+        header('Access-Control-Allow-Origin: *');
     }
 
     // lista todos responsaveis

@@ -17,6 +17,7 @@ class Turma extends ResourceController
     public function __construct()
     {
         $this->validacao = new Validacao();
+        header('Access-Control-Allow-Origin: *');
     }
 
     //Metedo Select Turma.

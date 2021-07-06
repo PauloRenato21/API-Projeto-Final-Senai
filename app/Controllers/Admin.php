@@ -15,6 +15,7 @@ class Admin extends ResourceController
     public function __construct()
     {
         $this->key = new Validacao();
+        header('Access-Control-Allow-Origin: *');
     }
 
     //Metedo Select Admin.

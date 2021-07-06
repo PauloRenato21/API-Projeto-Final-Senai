@@ -10,6 +10,11 @@ use App\Models\ClubeModel;
 
 class AtletaSearch extends ResourceController{
 
+    public function __construct()
+    {
+        header('Access-Control-Allow-Origin: *');
+    }
+
     //Metodo que pega o buscador e pesquisa a existência dele no BD;
     public function index()
     {
