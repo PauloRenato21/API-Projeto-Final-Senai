@@ -16,33 +16,35 @@ class Atleta extends ResourceController{
     {
         $this->validacao = new Validacao();
         header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+        header('Access-Control-Allow-Headers: *');
     }
 
     //Metedo Select Atleta.
     public function index()
     {
-        // if($this->request->getHeader("Authorization")){
-        //     if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
+        if($this->request->getHeader("Authorization")){
+            if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
 
                 $modal = new AtletaModel();
                 $data = $modal->findAll();
 
                 return $this->respond($data);
     
-        //     } else{
-        //         $erro = [
-        //             'Erro' => 'Token Inválido'
-        //         ];
+            } else{
+                $erro = [
+                    'Erro' => 'Token Inválido'
+                ];
 
-        //         return $this->respond($erro);
-        //     }
-        // } else{
-        //     $erro = [
-        //         'Erro' => 'Authorization|Token não encontrado'
-        //     ];
+                return $this->respond($erro);
+            }
+        } else{
+            $erro = [
+                'Erro' => 'Authorization|Token não encontrado'
+            ];
 
-        //     return $this->respond($erro);
-        // }
+            return $this->respond($erro);
+        }
     }
 
     //Metodo que tras informações relacionadas com um Atleta: 

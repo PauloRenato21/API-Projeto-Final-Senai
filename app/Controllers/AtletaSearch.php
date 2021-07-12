@@ -13,6 +13,8 @@ class AtletaSearch extends ResourceController{
     public function __construct()
     {
         header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+        header('Access-Control-Allow-Headers: *');
     }
 
     //Metodo que pega o buscador e pesquisa a existência dele no BD;
