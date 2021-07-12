@@ -8,14 +8,14 @@ class AtletaModel extends Model{
     protected $allowedFields = ['nome','cpf','dt_nascimento','endereco_rua','endereco_bairro','endereco_CEP','naturalidade','problema_saude','alergia','medicamento','telefone','email','fk_turma_id','fk_Responsavel_id'];
     
     protected $validationRules = [
-        'nome' => 'required',
+        'nome' => 'required|max_length[100]',
         'cpf' => 'required|min_length[14]|max_length[14]',
-        'dt_nascimento' => 'required|valid_date[Y/m/d]',
+        'dt_nascimento' => 'required|valid_date[Y-m-d]',
         'endereco_rua' => 'required|max_length[50]',
         'endereco_bairro' => 'required|max_length[50]',
         'endereco_CEP' => 'required|max_length[10]',
         'naturalidade' => 'required|max_length[50]',
-        'telefone' => 'required|is_natural',
+        'telefone' => 'required',
         'fk_turma_id' => 'required|is_natural'
     ];
 }

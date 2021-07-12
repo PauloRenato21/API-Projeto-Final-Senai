@@ -9,6 +9,6 @@ class AdminModel extends Model{
     protected $validationRules = [
         'nome' => 'required|max_length[100]',
         'user' => 'required|max_length[100]',
-        'password' => 'required|max_length[50]'  
+        'password' => 'required|max_length[100]'  
     ];
 }
