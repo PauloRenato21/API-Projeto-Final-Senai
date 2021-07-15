@@ -5,7 +5,7 @@ use CodeIgniter\Model;
 class AtletaModel extends Model{
     protected $table = 'atleta';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['nome','cpf','dt_nascimento','endereco_rua','endereco_bairro','endereco_CEP','naturalidade','problema_saude','alergia','medicamento','telefone','email','fk_turma_id','fk_Responsavel_id'];
+    protected $allowedFields = ['nome','cpf','dt_nascimento','endereco_rua','endereco_numero','endereco_bairro','endereco_CEP','naturalidade','problema_saude','alergia','medicamento','telefone','email','fk_turma_id','fk_Responsavel_id'];
     
     protected $validationRules = [
         'nome' => 'required|max_length[100]',
