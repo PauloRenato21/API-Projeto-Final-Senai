@@ -12,6 +12,8 @@ class TurmaModel extends Model{
         'nome' => 'required|max_length[50]',
         'turno' => 'required|max_length[50]',
         'horario_inicial' => 'required',
-        'horario_termino' => 'required'
+        'horario_termino' => 'required',
+        'fk_categoria_id' => 'required',
+        'fk_franquias_id' => 'required',
     ];
 }
