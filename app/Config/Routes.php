@@ -60,7 +60,7 @@ $routes->resource('cargo',['placeholder' => '(:num)']);
 $routes->get('cargo/pdf','cargo::cargoPdf');
 
 $routes->resource('funcionario',['placeholder' => '(:num)']);
-$routes->get('funcionario/informacoes','funcionario::funcionariocargoturma');
+$routes->get('funcionario/informacoes','funcionario::funcionariocargofranquia');
 $routes->get('funcionario/pdf','funcionario::funcionarioPdf');
 
 $routes->resource('turmafuncionario', ['placeholder' => '(:num)']);
