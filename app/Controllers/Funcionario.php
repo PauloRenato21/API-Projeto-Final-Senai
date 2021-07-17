@@ -198,16 +198,19 @@ class Funcionario extends ResourceController
                 $funcionarioModel = new FuncionarioModel();
                 $cargoModel = new CargoModel();
                 $franquiaModel = new FranquiaModel();
+                $turmafuncionarioModel = new TurmaFuncionarioModel();
                 
                 $datafuncionario = $funcionarioModel->findAll();
                 $datacargo = $cargoModel->findAll();
                 $datafranquia = $franquiaModel->findAll();
+                $allDataTurmaFuncionario = $turmafuncionarioModel->getAllTurmaFuncionario()->findAll();
                 
                 $resultado = [];
                 
                 foreach ($datafuncionario as $funcionario){
                     $funcionario['cargo'] = array();
                     $funcionario['franquia'] = array();
+                    $funcionario['turma'] = array();
                 
                     foreach ($datacargo as $cl){
                         if ($funcionario['fk_cargo_id'] == $cl['id']){
@@ -234,6 +237,18 @@ class Funcionario extends ResourceController
                             array_push($funcionario['franquia'],$funcionariofranquia);
                         }
                     }
+
+                    foreach($allDataTurmaFuncionario as $tf){
+                        if($funcionario['id'] == $tf['fk_funcionario_id']){
+                            $funcionarioturma['id'] = $tf['fk_turma_id'];
+                            $funcionarioturma['nome'] = $tf['nome'];
+                            $funcionarioturma['turno'] = $tf['turno'];
+                            $funcionarioturma['horario_inicial'] = $tf['horario_inicial'];
+                            $funcionarioturma['horario_termino'] = $tf['horario_termino'];
+
+                            array_push($funcionario['turma'], $funcionarioturma);
+                        }
+                    }
                 
                     array_push($resultado, $funcionario);
                 }
@@ -254,25 +269,23 @@ class Funcionario extends ResourceController
         }
     }
 
-    public function funcionariocargoturma(){
+    public function funcionariocargofranquia(){
         if($this->request->getHeader("Authorization")){
             if($this->validacao->validacaoToken($this->request->getHeader("Authorization")->getValue())){
 
                 $funcionarioModel = new FuncionarioModel();
                 $cargoModel = new CargoModel();
-                $turmafuncionarioModel = new TurmaFuncionarioModel();
+                $franquiaModel = new FranquiaModel();
                 
                 $datafuncionario = $funcionarioModel->findAll();
                 $datacargo = $cargoModel->findAll();
-                $dataturmafuncionario = $turmafuncionarioModel->findAll();
-
-                $allDataTurmaFuncionario = $turmafuncionarioModel->getAllTurmaFuncionario()->findAll();
+                $datafranquia = $franquiaModel->findAll();
                 
                 $resultado = [];
                 
                 foreach ($datafuncionario as $funcionario){
                     $funcionario['cargo'] = array();
-                    $funcionario['turma'] = array();
+                    $funcionario['franquia'] = array();
 
                     foreach ($datacargo as $cl){
                         if ($funcionario['fk_cargo_id'] == $cl['id']){
@@ -284,16 +297,13 @@ class Funcionario extends ResourceController
                         }
                     }
                 
-                    foreach ($allDataTurmaFuncionario as $tf){
-                        if ($funcionario['id'] == $tf['fk_funcionario_id']){
+                    foreach ($datafranquia as $franquia){
+                        if ($funcionario['fk_franquias_id'] == $franquia['id']){
                     
-                            $funcionarioturma['id'] = $tf['fk_turma_id'];
-                            $funcionarioturma['nome'] = $tf['nome'];
-                            $funcionarioturma['turno'] = $tf['turno'];
-                            $funcionarioturma['horario_inicial'] = $tf['horario_inicial'];
-                            $funcionarioturma['horario_termino'] = $tf['horario_termino'];
+                            $funcionariofranquia['id'] = $franquia['id'];
+                            $funcionariofranquia['nome'] = $franquia['nome'];
                     
-                            array_push($funcionario['turma'], $funcionarioturma);
+                            array_push($funcionario['franquia'], $funcionariofranquia);
                         }
                     }
                 
